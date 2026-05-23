@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusCare — Sign in</title>
+  <link href="https://fonts.googleapis.com/css?family=Mona+Sans:300,400,500,600,700" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+
+  <style>
+    :root {
+      --color-primary: #3aa0ed;
+      --color-primary-hover: #2a8fd8;
+      --color-primary-light: #dbe9f9;
+      --color-bg-page: linear-gradient(135deg, #c9d2f1 0%, #dbe9f9 50%, #f0f4f9 100%);
+      --color-bg-card: rgba(251, 253, 255, 0.82);
+      --color-border-glass: rgba(255, 255, 255, 0.7);
+      --color-text-primary: #1d2328;
+      --color-text-muted: rgba(29, 35, 40, 0.6);
+      --color-divider: rgba(0, 0, 0, 0.08);
+      --color-input-bg: rgba(255, 255, 255, 0.9);
+      --color-input-border: rgba(0, 0, 0, 0.15);
+      --shadow-card: 0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
+      --blur: blur(20px);
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 999px;
+      --font: "Mona Sans", sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-primary: #4fb3ff;
+      --color-primary-hover: #68bfff;
+      --color-primary-light: #1a2a3a;
+      --color-bg-page: linear-gradient(135deg, #131926 0%, #1a1f2e 50%, #1e2330 100%);
+      --color-bg-card: rgba(25, 30, 44, 0.85);
+      --color-border-glass: rgba(255,255,255,0.08);
+      --color-text-primary: #e8edf2;
+      --color-text-muted: rgba(232,237,242,0.55);
+      --color-divider: rgba(255,255,255,0.07);
+      --color-input-bg: rgba(255,255,255,0.06);
+      --color-input-border: rgba(255,255,255,0.15);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: var(--font);
+      min-height: 100vh;
+      background: var(--color-bg-page);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    body::before, body::after {
+      content:'';
+      position:fixed;
+      border-radius:50%;
+      pointer-events:none;
+    }
+    body::before {
+      width:600px; height:600px;
+      background: radial-gradient(circle, rgba(58,160,237,0.13) 0%, transparent 70%);
+      top:-200px; left:-200px;
+    }
+    body::after {
+      width:500px; height:500px;
+      background: radial-gradient(circle, rgba(58,160,237,0.08) 0%, transparent 70%);
+      bottom:-150px; right:-150px;
+    }
+
+    .theme-btn {
+      position:fixed; top:1.25rem; right:1.25rem;
+      width:2.2rem; height:2.2rem;
+      border:1px solid var(--color-border-glass);
+      background:var(--color-bg-card);
+      backdrop-filter:var(--blur);
+      border-radius:var(--radius-full);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      color:var(--color-text-muted);
+      font-size:1rem; z-index:10;
+      transition:color 0.2s;
+    }
+    .theme-btn:hover { color:var(--color-text-primary); }
+
+    .card {
+      width:100%; max-width:420px;
+      background:var(--color-bg-card);
+      backdrop-filter:var(--blur);
+      border:1px solid var(--color-border-glass);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-card);
+      padding:2.5rem 2rem;
+      position:relative; z-index:1;
+    }
+
+    .brand {
+      display:flex; align-items:center; gap:0.75rem;
+      margin-bottom:2rem;
+    }
+    .brand-icon {
+      width:2.8rem; height:2.8rem;
+      background:var(--color-primary);
+      border-radius:var(--radius-md);
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    .brand-icon i { color:#fff; font-size:1.35rem; }
+    .brand-name { font-size:1.2rem; font-weight:600; color:var(--color-text-primary); line-height:1.1; }
+    .brand-sub { font-size:0.72rem; color:var(--color-text-muted); margin-top:1px; }
+
+    .card-title { font-size:1.5rem; font-weight:600; color:var(--color-text-primary); }
+    .card-sub {
+      font-size:0.85rem; color:var(--color-text-muted);
+      margin-top:0.35rem; margin-bottom:1.75rem; line-height:1.5;
+    }
+
+    .domain-badge {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      padding:0.3rem 0.7rem;
+      background:var(--color-primary-light);
+      color:var(--color-primary);
+      border-radius:var(--radius-full);
+      font-size:0.72rem; font-weight:500;
+      margin-bottom:1.5rem;
+    }
+
+    .btn-outlook {
+      width:100%;
+      display:flex; align-items:center; justify-content:center; gap:0.65rem;
+      padding:0.8rem 1rem;
+      background:var(--color-primary); color:#fff;
+      border:none; border-radius:var(--radius-md);
+      font-family:var(--font); font-size:0.92rem; font-weight:500;
+      cursor:pointer;
+      transition:background 0.2s, transform 0.15s;
+    }
+    .btn-outlook:hover { background:var(--color-primary-hover); transform:translateY(-1px); }
+    .btn-outlook:active { transform:translateY(0); }
+    .btn-outlook:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+    .ms-logo { width:18px; height:18px; flex-shrink:0; }
+
+    /* Loading state inside button */
+    .btn-spinner {
+      width:16px; height:16px;
+      border:2px solid rgba(255,255,255,0.4);
+      border-top-color:#fff;
+      border-radius:50%;
+      animation:spin 0.7s linear infinite;
+      display:none;
+    }
+    .btn-outlook.loading .btn-spinner { display:block; }
+    .btn-outlook.loading .btn-text { display:none; }
+    .btn-outlook.loading .ms-logo { display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Error box */
+    .error-box {
+      display:none;
+      background:#fff1f1;
+      border:1px solid #fbc8c8;
+      border-radius:var(--radius-md);
+      padding:0.65rem 0.85rem;
+      font-size:0.8rem;
+      color:#a32d2d;
+      margin-top:1rem;
+      line-height:1.5;
+    }
+    [data-theme="dark"] .error-box {
+      background:#2d1a1a;
+      border-color:#5a2828;
+      color:#f08080;
+    }
+
+    .card-footer {
+      margin-top:1.75rem;
+      font-size:0.73rem;
+      color:var(--color-text-muted);
+      text-align:center; line-height:1.6;
+    }
+    .card-footer a { color:var(--color-primary); text-decoration:none; }
+
+    .info-note {
+      margin-top:1.25rem;
+      padding:0.65rem 0.85rem;
+      background:var(--color-primary-light);
+      border-radius:var(--radius-md);
+      font-size:0.78rem;
+      color:var(--color-primary);
+      line-height:1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+    <i class="ti ti-moon" id="themeIcon"></i>
+  </button>
+
+  <div class="card">
+    <div class="brand">
+      <div class="brand-icon"><i class="ti ti-heart-rate-monitor"></i></div>
+      <div>
+        <p class="brand-name">CampusCare</p>
+        <p class="brand-sub">A healthy life for all students</p>
+      </div>
+    </div>
+
+    <h1 class="card-title">Welcome back</h1>
+    <p class="card-sub">Sign in with your Caleb University Microsoft account to access your health dashboard.</p>
+
+    <div class="domain-badge">
+      <i class="ti ti-school"></i>
+      <span>calebuniversity.edu.ng</span>
+    </div>
+
+    <button class="btn-outlook" id="outlookBtn">
+      <svg class="ms-logo" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+        <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+        <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+        <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+      </svg>
+      <span class="btn-text">Continue with Microsoft (School Email)</span>
+      <div class="btn-spinner"></div>
+    </button>
+
+    <div class="error-box" id="errorBox">
+      <strong>Sign-in failed.</strong> <span id="errorMsg">Please try again with your Caleb University email.</span>
+    </div>
+
+    <div class="info-note">
+      <i class="ti ti-info-circle"></i>
+      Microsoft will handle your password securely — CampusCare never sees it.
+    </div>
+
+    <div class="card-footer">
+      By signing in, you agree to CampusCare's
+      <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
+      Need help? Contact <a href="mailto:health@calebuniversity.edu.ng">health@calebuniversity.edu.ng</a>
+    </div>
+  </div>
+
+  <script>
+    /* ── Theme ── */
+    const html = document.documentElement;
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    function applyTheme(dark) {
+      html.setAttribute('data-theme', dark ? 'dark' : 'light');
+      themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
+      localStorage.setItem('cc_theme', dark ? 'dark' : 'light');
+    }
+    const savedTheme = localStorage.getItem('cc_theme');
+    applyTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+    themeBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') !== 'dark'));
+
+    /* ── MSAL Configuration ──
+       ⚠️  REPLACE "YOUR_CLIENT_ID_HERE" with your Azure App Registration Client ID
+       ⚠️  REPLACE the tenant domain with your actual Caleb University tenant domain
+           (find it in Azure Portal → Azure Active Directory → Overview → Primary domain)
+    ── */
+    const msalConfig = {
+      auth: {
+        clientId: "YOUR_CLIENT_ID_HERE",
+        authority: "https://login.microsoftonline.com/calebuniversity.edu.ng",
+        redirectUri: window.location.origin + window.location.pathname.replace('login.html', ''),
+        postLogoutRedirectUri: window.location.origin + "/login.html",
+      },
+      cache: {
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: false,
+      }
+    };
+
+    const loginRequest = {
+      scopes: ["User.Read"],
+      // Force Caleb University accounts only
+      loginHint: undefined,
+      domainHint: "calebuniversity.edu.ng",
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    /* ── Parse name from email format: surname.firstnameug25@ ── */
+    function parseSchoolEmail(email) {
+      const local = email.split('@')[0].toLowerCase();
+      const parts = local.split('.');
+      const surname = parts[0] ? capitalise(parts[0]) : '';
+      const rawFirst = parts[1] || '';
+      const firstname = capitalise(rawFirst.replace(/ug\d{2}$/i, ''));
+      const initials = (surname[0] || '') + (firstname[0] || '');
+      return {
+        firstName: firstname,
+        lastName: surname,
+        fullName: firstname ? `${firstname} ${surname}` : surname,
+        displayName: firstname ? `${firstname} ${surname[0]}.` : surname,
+        initials,
+      };
+    }
+
+    function capitalise(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+    /* ── Fetch profile photo from Microsoft Graph ── */
+    async function fetchProfilePhoto(accessToken) {
+      try {
+        const res = await fetch('https://graph.microsoft.com/v1.0/me/photo/$value', {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (!res.ok) return null;
+        const blob = await res.blob();
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+      } catch {
+        return null;
+      }
+    }
+
+    /* ── Handle redirect response (called on page load) ── */
+    async function handleRedirectResponse() {
+      try {
+        const response = await msalInstance.handleRedirectPromise();
+        if (response && response.account) {
+          await completeSignIn(response);
+        }
+      } catch (err) {
+        showError(err.message || 'Authentication failed.');
+      }
+    }
+
+    /* ── Complete sign-in: get Graph data, save session, redirect ── */
+    async function completeSignIn(authResponse) {
+      const btn = document.getElementById('outlookBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      try {
+        // Get a token for Microsoft Graph
+        const tokenRequest = {
+          scopes: ['User.Read'],
+          account: authResponse.account,
+        };
+
+        let tokenResponse;
+        try {
+          tokenResponse = await msalInstance.acquireTokenSilent(tokenRequest);
+        } catch {
+          tokenResponse = authResponse; // use the token from redirect if silent fails
+        }
+
+        const accessToken = tokenResponse.accessToken;
+
+        // Fetch user profile from Microsoft Graph
+        const profileRes = await fetch('https://graph.microsoft.com/v1.0/me', {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const profile = await profileRes.json();
+
+        // Validate it's a Caleb University account
+        const email = (profile.mail || profile.userPrincipalName || '').toLowerCase();
+        if (!email.endsWith('@calebuniversity.edu.ng')) {
+          msalInstance.logoutRedirect({ postLogoutRedirectUri: window.location.href });
+          showError('Please sign in with your Caleb University school email (@calebuniversity.edu.ng).');
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          return;
+        }
+
+        // Parse name from email (fallback to MS display name)
+        const parsed = parseSchoolEmail(email);
+        const firstName = parsed.firstName || profile.givenName || profile.displayName.split(' ')[0];
+        const lastName = parsed.lastName || profile.surname || '';
+        const fullName = profile.displayName || parsed.fullName;
+        const initials = (firstName[0] || '') + (lastName[0] || '');
+
+        // Fetch profile photo (may be null if not set)
+        const avatarUrl = await fetchProfilePhoto(accessToken);
+
+        // Save session
+        const session = {
+          email,
+          firstName,
+          lastName,
+          fullName,
+          displayName: firstName ? `${firstName} ${lastName[0]}.` : fullName,
+          initials: initials.toUpperCase(),
+          avatarUrl,
+          msAccount: authResponse.account.homeAccountId,
+          loggedInAt: new Date().toISOString(),
+        };
+        localStorage.setItem('cc_user', JSON.stringify(session));
+
+        // Go to dashboard
+        window.location.href = 'index.html';
+
+      } catch (err) {
+        showError('Could not fetch your profile. Please try again.');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    }
+
+    /* ── Sign-in button click ── */
+    document.getElementById('outlookBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('outlookBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      try {
+        // Using redirect (works on all browsers including Safari/mobile)
+        await msalInstance.loginRedirect({
+          ...loginRequest,
+          redirectStartPage: window.location.href,
+        });
+        // Page will redirect — code below won't run
+      } catch (err) {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        showError(err.message || 'Could not open Microsoft sign-in. Please try again.');
+      }
+    });
+
+    function showError(msg) {
+      const box = document.getElementById('errorBox');
+      document.getElementById('errorMsg').textContent = msg;
+      box.style.display = 'block';
+    }
+
+    /* ── Already logged in? Skip straight to dashboard ── */
+    const existingSession = localStorage.getItem('cc_user');
+    if (existingSession) {
+      window.location.href = 'index.html';
+    } else {
+      // Handle the redirect coming back from Microsoft
+      handleRedirectResponse();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusCare</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Mona+Sans:200,300,regular,500,600,700,800,900,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Manrope:200,300,regular,500,600,700,800" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+</head>
+<body>
+
+  <script src="campuscare-session.js"></script>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="dashboard">
+
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu"><i class="ti ti-x"></i></button>
+
+      <div class="sidebar-logo">
+        <div class="logo-icon"><i class="ti ti-heart-rate-monitor"></i></div>
+        <div class="logo-text">
+          <p class="logo-name">CampusCare</p>
+          <p class="logo-sub">A healthy life for all</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="nav-group-label">Main</p>
+        <a href="#" class="nav-item active" data-page="home">
+          <div class="link-name"><i class="ti ti-home"></i><span>Home</span></div>
+          <div class="nav-item-notif">4</div>
+        </a>
+        <a href="#" class="nav-item" data-page="overview">
+          <div class="link-name"><i class="ti ti-layout-dashboard"></i><span>Overview</span></div>
+        </a>
+        <p class="nav-group-label">Health</p>
+        <a href="#" class="nav-item" data-page="records">
+          <div class="link-name"><i class="ti ti-file-analytics"></i><span>My records</span></div>
+        </a>
+        <a href="#" class="nav-item" data-page="prescriptions">
+          <div class="link-name"><i class="ti ti-pill"></i><span>Prescriptions</span></div>
+        </a>
+        <a href="#" class="nav-item" data-page="wellness">
+          <div class="link-name"><i class="ti ti-heart"></i><span>Wellness hub</span></div>
+        </a>
+        <p class="nav-group-label">Campus</p>
+        <a href="#" class="nav-item" data-page="directory">
+          <div class="link-name"><i class="ti ti-map-pin"></i><span>Directory</span></div>
+        </a>
+        <a href="#" class="nav-item" data-page="emergency">
+          <div class="link-name"><i class="ti ti-ambulance"></i><span>Emergency</span></div>
+          <div class="nav-item-notif" style="background:#FCEBEB;color:#A32D2D;font-weight:600;font-size:0.6rem;width:auto;padding:0 5px;">SOS</div>
+        </a>
+        <p class="nav-group-label">Connect</p>
+        <a href="#" class="nav-item" data-page="ai-doctor">
+          <div class="link-name"><i class="ti ti-robot"></i><span>AI doctor</span></div>
+          <div class="nav-item-notif" style="background:#EAF3DE;color:#3B6D11;width:auto;padding:0 5px;font-size:0.6rem;">New</div>
+        </a>
+        <a href="#" class="nav-item" data-page="messages">
+          <div class="link-name"><i class="ti ti-messages"></i><span>Messages</span></div>
+          <div class="nav-item-notif">2</div>
+        </a>
+      </nav>
+
+      <div class="sidebar-profile">
+        <div class="sidebar-profile-avatar">SA</div>
+        <div>
+          <p class="sidebar-profile-name">Samuel A.</p>
+          <p class="sidebar-profile-role">Student</p>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" id="hamburger" aria-label="Open menu"><i class="ti ti-menu-2"></i></button>
+        <div class="welcome-msg">Hey, Samuel! Glad to have you back 👋</div>
+
+        <div class="topbar-pill">
+          <button class="notification" aria-label="Notifications">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/>
+              <path d="M9 17v1a3 3 0 0 0 6 0v-1"/>
+            </svg>
+          </button>
+
+          <div class="dropdown-wrap" id="settingsWrap">
+            <button class="settings dropdown-trigger" aria-label="Settings" id="settingsBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/>
+                <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/>
+              </svg>
+            </button>
+            <div class="dropdown-menu" id="settingsDropdown">
+              <p class="dropdown-section-label">Account</p>
+              <div class="dropdown-item">
+                <i class="ti ti-user"></i>
+                <div class="dropdown-item-text">
+                  <span class="dropdown-item-title">Edit profile</span>
+                  <span class="dropdown-item-sub">Name, email, photo</span>
+                </div>
+              </div>
+              <div class="dropdown-item">
+                <i class="ti ti-lock"></i>
+                <div class="dropdown-item-text">
+                  <span class="dropdown-item-title">Change password</span>
+                  <span class="dropdown-item-sub">Update your credentials</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <p class="dropdown-section-label">Theme</p>
+              <div class="dropdown-item theme-row">
+                <i class="ti ti-moon" id="settingsThemeIcon"></i>
+                <div class="dropdown-item-text">
+                  <span class="dropdown-item-title" id="settingsThemeLabel">Dark mode</span>
+                  <span class="dropdown-item-sub">Toggle appearance</span>
+                </div>
+                <label class="toggle-switch" aria-label="Toggle dark mode">
+                  <input type="checkbox" id="themeCheckbox" />
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="dropdown-wrap" id="profileWrap">
+            <div class="user-account dropdown-trigger" id="profileBtn" role="button" tabindex="0" aria-label="Account menu">
+              <img src="av3.jpg" alt="Profile">
+            </div>
+            <div class="dropdown-menu dropdown-menu--right" id="profileDropdown">
+              <div class="profile-dropdown-header">
+                <div class="profile-dropdown-avatar">SA</div>
+                <div class="profile-dropdown-info">
+                  <p class="profile-dropdown-name">Samuel Alekhojie</p>
+                  <p class="profile-dropdown-meta">MED/2024/00142</p>
+                  <span class="profile-dropdown-badge">Student</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item"><i class="ti ti-user-circle"></i><div class="dropdown-item-text"><span class="dropdown-item-title">My profile</span></div></div>
+              <div class="dropdown-item"><i class="ti ti-file-medical"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Medical records</span></div></div>
+              <div class="dropdown-item"><i class="ti ti-id-badge"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Student ID card</span></div></div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item dropdown-item--danger"><i class="ti ti-logout"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Log out</span></div></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- HOME PAGE -->
+      <section class="page-section" data-section="home">
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrap" style="background:#E6F1FB;"><i class="ti ti-heart-rate-monitor" style="color:#185FA5;"></i></div>
+            <div class="stat-body">
+              <p class="stat-label">Health score</p>
+              <p class="stat-value">87<span class="stat-unit">/100</span></p>
+              <p class="stat-sub">Good standing</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrap" style="background:#EAF3DE;"><i class="ti ti-calendar-check" style="color:#3B6D11;"></i></div>
+            <div class="stat-body">
+              <p class="stat-label">Last checkup</p>
+              <p class="stat-value" style="font-size:1.2rem;">Mar 14</p>
+              <p class="stat-sub">42 days ago</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrap" style="background:#FAEEDA;"><i class="ti ti-pill" style="color:#854F0B;"></i></div>
+            <div class="stat-body">
+              <p class="stat-label">Active meds</p>
+              <p class="stat-value">2</p>
+              <p class="stat-sub">1 refill due</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrap" style="background:#FCEBEB;"><i class="ti ti-alert-triangle" style="color:#A32D2D;"></i></div>
+            <div class="stat-body">
+              <p class="stat-label">Allergies</p>
+              <p class="stat-value">3</p>
+              <p class="stat-sub">On file</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="home-section-label">Quick actions</p>
+        <div class="quick-actions">
+          <div class="qa-btn" data-page="records">
+            <div class="qa-icon" style="background:#E6F1FB;"><i class="ti ti-file-medical" style="color:#185FA5;"></i></div>
+            <span>My records</span>
+          </div>
+          <div class="qa-btn" data-page="overview">
+            <div class="qa-icon" style="background:#EAF3DE;"><i class="ti ti-calendar-plus" style="color:#3B6D11;"></i></div>
+            <span>Book appt</span>
+          </div>
+          <div class="qa-btn" data-page="ai-doctor">
+            <div class="qa-icon" style="background:#EEEDFE;"><i class="ti ti-robot" style="color:#534AB7;"></i></div>
+            <span>AI doctor</span>
+          </div>
+          <div class="qa-btn qa-btn--sos" data-page="emergency">
+            <div class="qa-icon" style="background:#FCEBEB;"><i class="ti ti-ambulance" style="color:#A32D2D;"></i></div>
+            <span>Emergency</span>
+          </div>
+        </div>
+
+        <div class="home-two-col">
+
+          <!-- STREAK CARD -->
+          <div class="card streak-card">
+
+            <div class="streak-top">
+              <div class="streak-flame-wrap">
+                <div class="streak-flame-bg" id="streakFlameBg">
+                  <span class="streak-flame-emoji" id="streakFlameEmoji">🔥</span>
+                </div>
+                <div>
+                  <div class="streak-number-row">
+                    <span class="streak-number" id="streakCount">0</span>
+                    <span class="streak-day-label">day streak</span>
+                  </div>
+                  <p class="streak-sub-label" id="streakSubLabel">Start your streak today!</p>
+                </div>
+              </div>
+              <div class="streak-xp-col">
+                <p class="streak-xp-val" id="streakXP">0 XP</p>
+                <p class="streak-xp-label">total points</p>
+              </div>
+            </div>
+
+            <div class="streak-level-row">
+              <span class="streak-level-badge" id="streakLevelBadge" style="background:#E6F1FB;color:#0C447C;">
+                <i class="ti ti-shield"></i>
+                <span id="streakLevelName">Health Starter</span>
+              </span>
+              <span class="streak-level-next" id="streakLevelNext">100 XP to next level</span>
+            </div>
+            <div class="streak-bar-track">
+              <div class="streak-bar-fill" id="streakBarFill" style="width:0%"></div>
+            </div>
+
+            <div class="streak-week" id="streakWeek"></div>
+
+            <div class="streak-divider"></div>
+
+            <div class="checkin-header">
+              <span class="checkin-title">Today's check-in</span>
+              <span class="checkin-status" id="checkinStatus">Answer all to log streak</span>
+            </div>
+
+            <div class="checkin-questions" id="checkinQuestions"></div>
+
+            <button class="checkin-submit" id="checkinSubmit" disabled>Log today's check-in</button>
+            <div class="checkin-toast" id="checkinToast"></div>
+
+            <div class="streak-divider" style="margin-top:1rem;"></div>
+            <p class="milestone-title"><i class="ti ti-trophy"></i> Milestone badges</p>
+            <div class="milestones-grid" id="milestonesGrid"></div>
+
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="home-right-col">
+            <div class="card">
+              <div class="card-header-row"><i class="ti ti-bell"></i><span class="card-title-text">Recent alerts</span></div>
+              <div class="alert-list">
+                <div class="alert-row"><span class="alert-dot" style="background:#3aa0ed;"></span><div><p class="alert-tag">Appointment reminder</p><p class="alert-text">Dental checkup — Monday 9 AM</p></div></div>
+                <div class="alert-row"><span class="alert-dot" style="background:#BA7517;"></span><div><p class="alert-tag">Refill due</p><p class="alert-text">Amoxicillin running low</p></div></div>
+                <div class="alert-row"><span class="alert-dot" style="background:#3B6D11;"></span><div><p class="alert-tag">Health tip</p><p class="alert-text">Stay hydrated — aim for 2L/day</p></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header-row"><i class="ti ti-sparkles"></i><span class="card-title-text">Wellness tips</span></div>
+              <div class="alert-list">
+                <div class="alert-row"><span class="alert-dot" style="background:#7F77DD;"></span><div><p class="alert-tag">Sleep</p><p class="alert-text">Aim for 7–8 hours before exams</p></div></div>
+                <div class="alert-row"><span class="alert-dot" style="background:#3B6D11;"></span><div><p class="alert-tag">Nutrition</p><p class="alert-text">Don't skip breakfast on long lecture days</p></div></div>
+                <div class="alert-row"><span class="alert-dot" style="background:#3aa0ed;"></span><div><p class="alert-tag">Mental health</p><p class="alert-text">Take 5-min breaks between study sessions</p></div></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- STUB PAGES -->
+      <section class="page-section" data-section="overview" style="display:none;"><div class="page-placeholder"><i class="ti ti-layout-dashboard"></i><p>Overview — coming soon</p></div></section>
+      <section class="page-section" data-section="records" style="display:none;"><div class="page-placeholder"><i class="ti ti-file-analytics"></i><p>My records — coming soon</p></div></section>
+      <section class="page-section" data-section="prescriptions" style="display:none;"><div class="page-placeholder"><i class="ti ti-pill"></i><p>Prescriptions — coming soon</p></div></section>
+      <section class="page-section" data-section="wellness" style="display:none;"><div class="page-placeholder"><i class="ti ti-heart"></i><p>Wellness hub — coming soon</p></div></section>
+      <section class="page-section" data-section="directory" style="display:none;"><div class="page-placeholder"><i class="ti ti-map-pin"></i><p>Directory — coming soon</p></div></section>
+      <section class="page-section" data-section="emergency" style="display:none;"><div class="page-placeholder"><i class="ti ti-ambulance"></i><p>Emergency — coming soon</p></div></section>
+      <section class="page-section" data-section="ai-doctor" style="display:none;"><div class="page-placeholder"><i class="ti ti-robot"></i><p>AI doctor — coming soon</p></div></section>
+      <section class="page-section" data-section="messages" style="display:none;"><div class="page-placeholder"><i class="ti ti-messages"></i><p>Messages — coming soon</p></div></section>
+
+    </div>
+  </div>
+
+<script>
+/* ── PAGE NAV ── */
+const navItems = document.querySelectorAll('.nav-item[data-page]');
+const pageSections = document.querySelectorAll('.page-section');
+function goToPage(target) {
+  navItems.forEach(n => n.classList.toggle('active', n.dataset.page === target));
+  pageSections.forEach(p => { p.style.display = p.dataset.section === target ? 'block' : 'none'; });
+  closeSidebar();
+}
+navItems.forEach(item => item.addEventListener('click', e => { e.preventDefault(); goToPage(item.dataset.page); }));
+document.querySelectorAll('.qa-btn[data-page]').forEach(btn => btn.addEventListener('click', () => goToPage(btn.dataset.page)));
+
+/* ── MOBILE SIDEBAR ── */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+const hamburger = document.getElementById('hamburger');
+const sidebarClose = document.getElementById('sidebarClose');
+function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('show'); }
+function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+hamburger.addEventListener('click', openSidebar);
+sidebarClose.addEventListener('click', closeSidebar);
+overlay.addEventListener('click', closeSidebar);
+
+/* ── DROPDOWNS ── */
+function setupDropdown(tid, did) {
+  const t = document.getElementById(tid), d = document.getElementById(did);
+  t.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = d.classList.contains('open');
+    document.querySelectorAll('.dropdown-menu').forEach(x => x.classList.remove('open'));
+    if (!open) d.classList.add('open');
+  });
+}
+setupDropdown('settingsBtn','settingsDropdown');
+setupDropdown('profileBtn','profileDropdown');
+document.addEventListener('click', () => document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('open')));
+
+/* ── DARK MODE ── */
+const html = document.documentElement;
+const themeCheckbox = document.getElementById('themeCheckbox');
+const themeIcon = document.getElementById('settingsThemeIcon');
+const themeLabel = document.getElementById('settingsThemeLabel');
+function applyTheme(dark) {
+  html.setAttribute('data-theme', dark ? 'dark' : 'light');
+  themeCheckbox.checked = dark;
+  themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
+  themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+const savedTheme = localStorage.getItem('theme');
+applyTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+themeCheckbox.addEventListener('change', () => applyTheme(themeCheckbox.checked));
+
+/* ── STREAK SYSTEM ── */
+const QUESTIONS = [
+  { id:'water',    emoji:'💧', bg:'#E6F1FB', main:'Did you drink enough water today?',         sub:'Aim for at least 1.5L',               pts:10        },
+  { id:'sleep',    emoji:'😴', bg:'#EEEDFE', main:'Did you get 7+ hours of sleep?',            sub:'Rest is part of health too',           pts:10        },
+  { id:'meal',     emoji:'🥗', bg:'#EAF3DE', main:'Did you eat at least two proper meals?',    sub:"Breakfast counts — don't skip it",     pts:10        },
+  { id:'exercise', emoji:'🏃', bg:'#FAECE7', main:'Did you move your body today?',             sub:'Even a 10-min walk counts',            pts:10        },
+  { id:'meds',     emoji:'💊', bg:'#FAEEDA', main:'Did you take your prescribed medications?', sub:'Tap N/A if you have none',             pts:10, na:true },
+  { id:'mental',   emoji:'🧘', bg:'#FBEAF0', main:"How's your mental health today?",          sub:'No stress is a health win',            pts:10        },
+];
+const MILESTONES = [
+  { emoji:'⭐', name:'First step',   req:'3-day streak',  days:3  },
+  { emoji:'🏅', name:'Week warrior', req:'7-day streak',  days:7  },
+  { emoji:'💪', name:'Iron health',  req:'14-day streak', days:14 },
+  { emoji:'👑', name:'Legend',       req:'30-day streak', days:30 },
+];
+function getLevel(xp) {
+  if (xp < 100) return { name:'Health Starter',  bg:'#E6F1FB', color:'#0C447C', next:100,  prev:0   };
+  if (xp < 200) return { name:'Wellness Rookie', bg:'#EAF3DE', color:'#27500A', next:200,  prev:100 };
+  if (xp < 400) return { name:'Health Guardian', bg:'#FAEEDA', color:'#633806', next:400,  prev:200 };
+  if (xp < 700) return { name:'Vitality Pro',    bg:'#EEEDFE', color:'#3C3489', next:700,  prev:400 };
+  return               { name:'Campus Legend',   bg:'#FCEBEB', color:'#791F1F', next:null, prev:700 };
+}
+let streak = JSON.parse(localStorage.getItem('cc_streak') || 'null') || {
+  count:0, xp:0, answers:{}, submitted:false,
+  week:[false,false,false,false,false,false,false], lastDate:null
+};
+(function checkDay() {
+  const today = new Date().toDateString();
+  if (streak.lastDate !== today) {
+    streak.answers = {}; streak.submitted = false; streak.lastDate = today;
+    localStorage.setItem('cc_streak', JSON.stringify(streak));
+  }
+})();
+function saveStreak() { localStorage.setItem('cc_streak', JSON.stringify(streak)); }
+function renderWeek() {
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const wrap = document.getElementById('streakWeek');
+  wrap.innerHTML = '';
+  days.forEach((d,i) => {
+    const done = streak.week[i];
+    const el = document.createElement('div');
+    el.className = 'streak-day';
+    el.innerHTML = `<div class="streak-day-circle${done?' done':''}">${done?'🔥':'·'}</div><span class="streak-day-name">${d}</span>`;
+    wrap.appendChild(el);
+  });
+}
+function renderQuestions() {
+  const wrap = document.getElementById('checkinQuestions');
+  wrap.innerHTML = '';
+  QUESTIONS.forEach(q => {
+    const ans = streak.answers[q.id];
+    const row = document.createElement('div');
+    row.className = `checkin-q${ans==='yes'?' q-yes':ans?' q-no':''}`;
+    row.innerHTML = `
+      <div class="checkin-q-icon" style="background:${q.bg}">${q.emoji}</div>
+      <div class="checkin-q-text">
+        <p class="checkin-q-main">${q.main}</p>
+        <p class="checkin-q-sub">${q.sub}</p>
+      </div>
+      <div class="checkin-q-btns">
+        ${q.na?`<button class="cq-btn${ans==='na'?' cq-yes':''}" data-id="${q.id}" data-val="na">N/A</button>`:''}
+        <button class="cq-btn${ans==='no'?' cq-no':''}" data-id="${q.id}" data-val="no">No</button>
+        <button class="cq-btn${ans==='yes'?' cq-yes':''}" data-id="${q.id}" data-val="yes">Yes</button>
+      </div>`;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('.cq-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (streak.submitted) return;
+      streak.answers[btn.dataset.id] = btn.dataset.val;
+      saveStreak(); renderQuestions(); updateSubmitBtn();
+    });
+  });
+}
+function updateSubmitBtn() {
+  const answered = QUESTIONS.filter(q => streak.answers[q.id]).length;
+  const remaining = QUESTIONS.length - answered;
+  const btn = document.getElementById('checkinSubmit');
+  const status = document.getElementById('checkinStatus');
+  if (streak.submitted) {
+    btn.textContent = '✓ Already logged today'; btn.disabled = true; btn.classList.remove('ready');
+    status.textContent = 'See you tomorrow!';
+  } else if (remaining === 0) {
+    btn.disabled = false; btn.classList.add('ready'); btn.textContent = "Log today's check-in →";
+    status.textContent = 'All done — ready to log!';
+  } else {
+    btn.disabled = true; btn.classList.remove('ready');
+    btn.textContent = `${remaining} question${remaining>1?'s':''} remaining`;
+    status.textContent = `${answered} of ${QUESTIONS.length} answered`;
+  }
+}
+function renderStreakHeader() {
+  document.getElementById('streakCount').textContent = streak.count;
+  document.getElementById('streakXP').textContent = streak.xp + ' XP';
+  const lv = getLevel(streak.xp);
+  const badge = document.getElementById('streakLevelBadge');
+  badge.style.background = lv.bg; badge.style.color = lv.color;
+  document.getElementById('streakLevelName').textContent = lv.name;
+  if (lv.next) {
+    const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
+    document.getElementById('streakBarFill').style.width = pct + '%';
+    document.getElementById('streakLevelNext').textContent = (lv.next - streak.xp) + ' XP to next level';
+  } else {
+    document.getElementById('streakBarFill').style.width = '100%';
+    document.getElementById('streakLevelNext').textContent = 'Max level reached!';
+  }
+  document.getElementById('streakSubLabel').textContent =
+    streak.count >= 7 ? "You're on fire! 🔥" : streak.count >= 3 ? 'Keep it going!' : 'Start your streak today!';
+}
+function renderMilestones() {
+  const wrap = document.getElementById('milestonesGrid');
+  wrap.innerHTML = '';
+  MILESTONES.forEach(m => {
+    const unlocked = streak.count >= m.days;
+    const el = document.createElement('div');
+    el.className = `milestone-badge${unlocked?'':' locked'}`;
+    if (unlocked) el.style.background = '#FAEEDA';
+    el.innerHTML = `<span class="milestone-emoji">${m.emoji}</span><span class="milestone-name">${m.name}</span><span class="milestone-req">${m.req}</span>`;
+    wrap.appendChild(el);
+  });
+}
+function showToast(won, pts, yes) {
+  const t = document.getElementById('checkinToast');
+  t.className = `checkin-toast show ${won?'toast-win':'toast-loss'}`;
+  t.textContent = won
+    ? `🔥 Streak extended! +${pts} XP earned. ${yes}/${QUESTIONS.length} habits logged.`
+    : `Streak reset. Only ${yes}/${QUESTIONS.length} habits logged. Tomorrow is a fresh start!`;
+}
+function animateFlame() {
+  document.getElementById('streakFlameEmoji').classList.add('pulse');
+  document.getElementById('streakFlameBg').classList.add('hot');
+  setTimeout(() => {
+    document.getElementById('streakFlameEmoji').classList.remove('pulse');
+    document.getElementById('streakFlameBg').classList.remove('hot');
+  }, 600);
+}
+document.getElementById('checkinSubmit').addEventListener('click', () => {
+  if (streak.submitted) return;
+  const yesCount = Object.values(streak.answers).filter(a => a==='yes'||a==='na').length;
+  const earned = yesCount * 10;
+  const majority = yesCount >= Math.ceil(QUESTIONS.length / 2);
+  if (majority) {
+    streak.count += 1; streak.xp += earned;
+    const dayIdx = (new Date().getDay() + 6) % 7;
+    streak.week[dayIdx] = true;
+    animateFlame(); showToast(true, earned, yesCount);
+  } else {
+    streak.count = 0; showToast(false, earned, yesCount);
+  }
+  streak.submitted = true; saveStreak();
+  renderStreakHeader(); renderWeek(); renderMilestones(); updateSubmitBtn();
+});
+renderStreakHeader(); renderWeek(); renderQuestions(); updateSubmitBtn(); renderMilestones();
+</script>
+</body>
+</html>

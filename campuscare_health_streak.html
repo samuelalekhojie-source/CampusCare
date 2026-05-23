@@ -1,0 +1,311 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.streak-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;font-family:var(--font-sans)}
+.streak-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.streak-left{display:flex;align-items:center;gap:10px}
+.flame-wrap{position:relative;width:52px;height:52px;display:flex;align-items:center;justify-content:center}
+.flame-bg{width:52px;height:52px;border-radius:50%;background:#FAEEDA;display:flex;align-items:center;justify-content:center;transition:background .4s}
+.flame-bg.hot{background:#EF9F27}
+.flame-icon{font-size:26px;transition:transform .3s}
+.flame-icon.pulse{animation:pulse .5s ease}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.streak-count{font-size:32px;font-weight:500;color:#BA7517;line-height:1}
+.streak-label{font-size:11px;color:#854F0B;margin-top:1px}
+.streak-meta{text-align:right}
+.streak-xp{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.streak-xp-label{font-size:10px;color:var(--color-text-secondary);margin-top:1px}
+.level-bar-wrap{margin-bottom:14px}
+.level-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.level-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 10px;border-radius:999px}
+.level-next{font-size:10px;color:var(--color-text-secondary)}
+.bar-track{height:8px;background:var(--color-background-secondary);border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;border-radius:999px;background:#EF9F27;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.week-row{display:flex;gap:6px;margin-bottom:14px}
+.day-dot{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.day-circle{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .3s}
+.day-circle.done{background:#FAEEDA;border-color:#EF9F27}
+.day-circle.today{border-color:#EF9F27;border-width:2px}
+.day-circle.missed{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.day-lbl{font-size:9px;color:var(--color-text-secondary)}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:0 0 14px}
+.checkin-title{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.checkin-subtitle{font-size:10px;color:var(--color-text-secondary);font-weight:400}
+.questions{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.q-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:all .2s;background:var(--color-background-primary)}
+.q-row.answered-yes{background:#EAF3DE;border-color:#97C459}
+.q-row.answered-no{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.q-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:background .2s}
+.q-text{flex:1}
+.q-main{font-size:11px;color:var(--color-text-primary);line-height:1.3;font-weight:500}
+.q-sub{font-size:9px;color:var(--color-text-secondary);margin-top:1px}
+.q-btns{display:flex;gap:4px;flex-shrink:0}
+.q-btn{padding:4px 10px;border-radius:999px;font-size:10px;border:0.5px solid var(--color-border-tertiary);cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s;font-weight:500}
+.q-btn:hover{background:var(--color-background-secondary)}
+.q-btn.yes-active{background:#3B6D11;color:#fff;border-color:#3B6D11}
+.q-btn.no-active{background:var(--color-background-secondary);color:var(--color-text-secondary);border-color:var(--color-border-secondary)}
+.q-check{width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.q-check.show{display:flex}
+.submit-btn{width:100%;padding:10px;border-radius:var(--border-radius-md);border:none;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font-sans)}
+.submit-btn:disabled{opacity:.4;cursor:default}
+.submit-btn.ready{background:#EF9F27;color:#412402}
+.submit-btn.ready:hover{background:#BA7517}
+.toast{display:none;margin-top:10px;padding:10px 14px;border-radius:var(--border-radius-md);font-size:12px;text-align:center;font-weight:500;animation:fadeIn .4s ease}
+.toast.show{display:block}
+.toast-win{background:#EAF3DE;color:#27500A;border:0.5px solid #97C459}
+.toast-loss{background:#FAEEDA;color:#633806;border:0.5px solid #FAC775}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.milestones{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:0}
+.milestone{border-radius:var(--border-radius-md);padding:8px 6px;text-align:center;border:0.5px solid var(--color-border-tertiary);transition:all .3s}
+.milestone.locked{opacity:.45}
+.milestone.unlocked{border-color:#EF9F27}
+.m-icon{font-size:18px;margin-bottom:3px}
+.m-name{font-size:9px;font-weight:500;color:var(--color-text-primary)}
+.m-req{font-size:8px;color:var(--color-text-secondary);margin-top:1px}
+</style>
+
+<h2 class="sr-only">CampusCare health streak system with daily check-in questions</h2>
+
+<div class="streak-card">
+
+  <div class="streak-header">
+    <div class="streak-left">
+      <div class="flame-wrap">
+        <div class="flame-bg" id="flameBg">
+          <span style="font-size:26px" id="flameEmoji">🔥</span>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:baseline;gap:4px">
+          <span class="streak-count" id="streakCount">12</span>
+          <span style="font-size:13px;color:#BA7517">day streak</span>
+        </div>
+        <div class="streak-label">Keep it going, Kemisola!</div>
+      </div>
+    </div>
+    <div class="streak-meta">
+      <div class="streak-xp" id="xpCount">340 XP</div>
+      <div class="streak-xp-label">total points</div>
+    </div>
+  </div>
+
+  <div class="level-bar-wrap">
+    <div class="level-row">
+      <span class="level-badge" id="levelBadge" style="background:#FAEEDA;color:#633806">
+        <i class="ti ti-shield" aria-hidden="true" style="font-size:12px"></i>
+        <span id="levelName">Health Guardian</span>
+      </span>
+      <span class="level-next" id="levelNext">60 XP to next level</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="xpBar" style="width:60%"></div></div>
+  </div>
+
+  <div class="week-row" id="weekRow"></div>
+
+  <div class="divider"></div>
+
+  <div class="checkin-title">
+    Today's health check-in
+    <span class="checkin-subtitle" id="checkinStatus">Answer all to log your streak</span>
+  </div>
+
+  <div class="questions" id="questions"></div>
+
+  <button class="submit-btn" id="submitBtn" disabled>Log today's check-in</button>
+  <div class="toast" id="toast"></div>
+
+  <div class="divider" style="margin-top:14px"></div>
+
+  <div style="font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:5px">
+    <i class="ti ti-trophy" aria-hidden="true" style="font-size:14px;color:#BA7517"></i>
+    Milestone badges
+  </div>
+  <div class="milestones" id="milestones"></div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {id:'water', icon:'💧', color:'#E6F1FB', iconColor:'#185FA5', main:'Did you drink enough water today?', sub:'Aim for at least 1.5L', points:10},
+  {id:'sleep', icon:'😴', color:'#EEEDFE', iconColor:'#534AB7', main:'Did you get 7+ hours of sleep?', sub:'Rest is part of health too', points:10},
+  {id:'meal', icon:'🥗', color:'#EAF3DE', iconColor:'#3B6D11', main:'Did you eat at least two proper meals?', sub:'Breakfast counts — don\'t skip it', points:10},
+  {id:'exercise', icon:'🏃', color:'#FAECE7', iconColor:'#993C1D', main:'Did you move your body today?', sub:'Even a 10-min walk counts', points:10},
+  {id:'meds', icon:'💊', color:'#FAEEDA', iconColor:'#854F0B', main:'Did you take any prescribed medications?', sub:'Or N/A if you have none', points:10, naOption:true},
+  {id:'mental', icon:'🧘', color:'#FBEAF0', iconColor:'#72243E', main:'How\'s your mental health today?', sub:'No stress is a health win too', points:10},
+];
+
+const MILESTONES = [
+  {icon:'⭐', name:'First step', req:'3 day streak', days:3},
+  {icon:'🏅', name:'Week warrior', req:'7 day streak', days:7},
+  {icon:'💪', name:'Iron health', req:'14 day streak', days:14},
+  {icon:'👑', name:'Campus legend', req:'30 day streak', days:30},
+];
+
+let state = JSON.parse(localStorage.getItem('cc_streak') || 'null') || {
+  streak: 12, xp: 340, answers: {}, submitted: false,
+  weekDots: [true,true,true,true,true,false,false]
+};
+
+function getLevel(xp){
+  if(xp < 100) return {name:'Health Starter', color:'#E6F1FB', text:'#0C447C', next:100};
+  if(xp < 200) return {name:'Wellness Rookie', color:'#EAF3DE', text:'#27500A', next:200};
+  if(xp < 400) return {name:'Health Guardian', color:'#FAEEDA', text:'#633806', next:400};
+  if(xp < 700) return {name:'Vitality Pro', color:'#EEEDFE', text:'#3C3489', next:700};
+  return {name:'Campus Legend', color:'#FCEBEB', text:'#791F1F', next:null};
+}
+
+function save(){localStorage.setItem('cc_streak', JSON.stringify(state));}
+
+function renderWeek(){
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const wrap = document.getElementById('weekRow');
+  wrap.innerHTML = '';
+  days.forEach((d,i)=>{
+    const done = state.weekDots[i];
+    const isToday = i === 5;
+    const dot = document.createElement('div');
+    dot.className = 'day-dot';
+    dot.innerHTML = `<div class="day-circle ${done?'done':isToday?'today':'missed'}">${done?'🔥':'·'}</div><span class="day-lbl">${d}</span>`;
+    wrap.appendChild(dot);
+  });
+}
+
+function renderQuestions(){
+  const wrap = document.getElementById('questions');
+  wrap.innerHTML = '';
+  QUESTIONS.forEach(q=>{
+    const ans = state.answers[q.id];
+    const row = document.createElement('div');
+    row.className = 'q-row' + (ans==='yes'?' answered-yes':ans?' answered-no':'');
+    row.innerHTML = `
+      <div class="q-icon" style="background:${q.color}">
+        <span style="font-size:15px">${q.icon}</span>
+      </div>
+      <div class="q-text">
+        <div class="q-main">${q.main}</div>
+        <div class="q-sub">${q.sub}</div>
+      </div>
+      <div class="q-btns">
+        ${q.naOption ? `<button class="q-btn${ans==='na'?' yes-active':''}" onclick="answer('${q.id}','na',this)">N/A</button>` : ''}
+        <button class="q-btn${ans==='no'?' no-active':''}" onclick="answer('${q.id}','no',this)">No</button>
+        <button class="q-btn${ans==='yes'?' yes-active':''}" onclick="answer('${q.id}','yes',this)">Yes</button>
+      </div>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+function answer(id, val, btn){
+  if(state.submitted) return;
+  state.answers[id] = val;
+  save();
+  renderQuestions();
+  checkReady();
+}
+
+function checkReady(){
+  const answered = QUESTIONS.filter(q=>state.answers[q.id]).length;
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('checkinStatus');
+  const remaining = QUESTIONS.length - answered;
+  if(state.submitted){
+    btn.textContent = 'Already logged today ✓';
+    btn.disabled = true;
+    btn.className = 'submit-btn';
+    status.textContent = 'See you tomorrow!';
+  } else if(remaining === 0){
+    btn.disabled = false;
+    btn.className = 'submit-btn ready';
+    btn.textContent = 'Log today\'s check-in →';
+    status.textContent = 'All answered — ready to log!';
+  } else {
+    btn.disabled = true;
+    btn.className = 'submit-btn';
+    btn.textContent = `${remaining} question${remaining>1?'s':''} remaining`;
+    status.textContent = `${answered} of ${QUESTIONS.length} answered`;
+  }
+}
+
+function submit(){
+  if(state.submitted) return;
+  const yesCount = Object.values(state.answers).filter(a=>a==='yes'||a==='na').length;
+  const earned = yesCount * 10;
+  const majority = yesCount >= Math.ceil(QUESTIONS.length / 2);
+
+  if(majority){
+    state.streak += 1;
+    state.xp += earned;
+    state.weekDots[5] = true;
+    showToast(true, earned, yesCount);
+    animateFlame();
+  } else {
+    state.streak = 0;
+    showToast(false, earned, yesCount);
+  }
+
+  state.submitted = true;
+  save();
+  renderAll();
+}
+
+function animateFlame(){
+  const emoji = document.getElementById('flameEmoji');
+  const bg = document.getElementById('flameBg');
+  emoji.className = 'pulse';
+  bg.className = 'flame-bg hot';
+  setTimeout(()=>{emoji.className='';bg.className='flame-bg';},600);
+}
+
+function showToast(won, pts, yes){
+  const t = document.getElementById('toast');
+  if(won){
+    t.className='toast show toast-win';
+    t.textContent = `🔥 Streak extended! +${pts} XP earned. ${yes}/${QUESTIONS.length} healthy habits today.`;
+  } else {
+    t.className='toast show toast-loss';
+    t.textContent = `Streak reset. Only ${yes}/${QUESTIONS.length} habits logged. Tomorrow is a fresh start!`;
+  }
+}
+
+function renderStreak(){
+  document.getElementById('streakCount').textContent = state.streak;
+  document.getElementById('xpCount').textContent = state.xp + ' XP';
+  const lv = getLevel(state.xp);
+  const badge = document.getElementById('levelBadge');
+  badge.style.background = lv.color;
+  badge.style.color = lv.text;
+  document.getElementById('levelName').textContent = lv.name;
+  if(lv.next){
+    const pct = Math.min(100,Math.round(((state.xp%(lv.next===100?100:lv.next-([100,200,400,700][([100,200,400,700].indexOf(lv.next)-1)]||0)))/(lv.next - ([100,200,400,700][([100,200,400,700].indexOf(lv.next)-1)]||0)))*100));
+    document.getElementById('xpBar').style.width = pct+'%';
+    document.getElementById('levelNext').textContent = (lv.next - state.xp) + ' XP to next level';
+  } else {
+    document.getElementById('xpBar').style.width = '100%';
+    document.getElementById('levelNext').textContent = 'Max level reached!';
+  }
+}
+
+function renderMilestones(){
+  const wrap = document.getElementById('milestones');
+  wrap.innerHTML = '';
+  MILESTONES.forEach(m=>{
+    const unlocked = state.streak >= m.days;
+    const el = document.createElement('div');
+    el.className = 'milestone' + (unlocked?'':' locked');
+    el.style.background = unlocked ? '#FAEEDA' : 'var(--color-background-secondary)';
+    el.innerHTML = `<div class="m-icon">${m.icon}</div><div class="m-name">${m.name}</div><div class="m-req">${m.req}</div>`;
+    wrap.appendChild(el);
+  });
+}
+
+function renderAll(){
+  renderStreak();
+  renderWeek();
+  renderQuestions();
+  renderMilestones();
+  checkReady();
+}
+
+document.getElementById('submitBtn').addEventListener('click', submit);
+renderAll();
+</script>
