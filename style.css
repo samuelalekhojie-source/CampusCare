@@ -720,6 +720,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  z-index: -1;
 }
 
 .hero-left {
