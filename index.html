@@ -5,19 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusCare</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css?family=Mona+Sans:200,300,regular,500,600,700,800,900,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Manrope:200,300,regular,500,600,700,800" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Inter:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
 </head>
 <body>
 
   <script src="campuscare-session.js"></script>
 
+  <!-- STREAK MODAL OVERLAY -->
+  <div class="streak-modal-overlay" id="streakModalOverlay">
+    <div class="streak-modal" id="streakModal">
+      <button class="streak-modal-close" id="streakModalClose"><i class="ti ti-x"></i></button>
+
+      <!-- Modal Header -->
+      <div class="sm-header">
+        <div class="sm-header-glow"></div>
+        <div class="sm-flame-orb" id="smFlameOrb">
+          <span class="sm-flame-emoji" id="smFlameEmoji">🔥</span>
+          <div class="sm-flame-ring" id="smFlameRing"></div>
+        </div>
+        <div class="sm-header-text">
+          <div class="sm-streak-row">
+            <span class="sm-streak-num" id="smStreakNum">0</span>
+            <span class="sm-streak-label">day streak</span>
+          </div>
+          <p class="sm-streak-sub" id="smStreakSub">Start your streak today!</p>
+        </div>
+        <div class="sm-xp-badge" id="smXpBadge">
+          <i class="ti ti-bolt"></i>
+          <span id="smXP">0 XP</span>
+        </div>
+      </div>
+
+      <!-- Level row -->
+      <div class="sm-level-section">
+        <div class="sm-level-row">
+          <span class="sm-level-chip" id="smLevelChip"><i class="ti ti-shield-filled"></i><span id="smLevelName">Health Starter</span></span>
+          <span class="sm-level-next" id="smLevelNext">100 XP to next level</span>
+        </div>
+        <div class="sm-bar-track">
+          <div class="sm-bar-fill" id="smBarFill" style="width:0%"></div>
+          <div class="sm-bar-glow" id="smBarGlow" style="left:0%"></div>
+        </div>
+      </div>
+
+      <!-- Week -->
+      <div class="sm-week" id="smWeek"></div>
+
+      <!-- Divider -->
+      <div class="sm-divider">
+        <span class="sm-divider-label"><i class="ti ti-clipboard-check"></i> Today's check-in</span>
+        <span class="sm-divider-status" id="smDividerStatus">Answer all to log</span>
+      </div>
+
+      <!-- Questions -->
+      <div class="sm-questions" id="smQuestions"></div>
+
+      <!-- Submit -->
+      <button class="sm-submit" id="smSubmit" disabled>
+        <span class="sm-submit-text" id="smSubmitText">Answer all questions</span>
+        <i class="ti ti-arrow-right sm-submit-arrow"></i>
+      </button>
+      <div class="sm-toast" id="smToast"></div>
+
+      <!-- Milestones -->
+      <div class="sm-milestones-section">
+        <p class="sm-milestones-label"><i class="ti ti-trophy"></i> Milestone badges</p>
+        <div class="sm-milestones-grid" id="smMilestonesGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR OVERLAY -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <div class="dashboard">
-
     <aside class="sidebar" id="sidebar">
       <button class="sidebar-close" id="sidebarClose" aria-label="Close menu"><i class="ti ti-x"></i></button>
 
@@ -77,6 +139,7 @@
     </aside>
 
     <div class="main">
+      <!-- TOPBAR -->
       <header class="topbar">
         <button class="hamburger" id="hamburger" aria-label="Open menu"><i class="ti ti-menu-2"></i></button>
         <div class="welcome-msg">Hey, Samuel! Glad to have you back 👋</div>
@@ -100,28 +163,13 @@
             </button>
             <div class="dropdown-menu" id="settingsDropdown">
               <p class="dropdown-section-label">Account</p>
-              <div class="dropdown-item">
-                <i class="ti ti-user"></i>
-                <div class="dropdown-item-text">
-                  <span class="dropdown-item-title">Edit profile</span>
-                  <span class="dropdown-item-sub">Name, email, photo</span>
-                </div>
-              </div>
-              <div class="dropdown-item">
-                <i class="ti ti-lock"></i>
-                <div class="dropdown-item-text">
-                  <span class="dropdown-item-title">Change password</span>
-                  <span class="dropdown-item-sub">Update your credentials</span>
-                </div>
-              </div>
+              <div class="dropdown-item"><i class="ti ti-user"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Edit profile</span><span class="dropdown-item-sub">Name, email, photo</span></div></div>
+              <div class="dropdown-item"><i class="ti ti-lock"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Change password</span><span class="dropdown-item-sub">Update your credentials</span></div></div>
               <div class="dropdown-divider"></div>
               <p class="dropdown-section-label">Theme</p>
               <div class="dropdown-item theme-row">
                 <i class="ti ti-moon" id="settingsThemeIcon"></i>
-                <div class="dropdown-item-text">
-                  <span class="dropdown-item-title" id="settingsThemeLabel">Dark mode</span>
-                  <span class="dropdown-item-sub">Toggle appearance</span>
-                </div>
+                <div class="dropdown-item-text"><span class="dropdown-item-title" id="settingsThemeLabel">Dark mode</span><span class="dropdown-item-sub">Toggle appearance</span></div>
                 <label class="toggle-switch" aria-label="Toggle dark mode">
                   <input type="checkbox" id="themeCheckbox" />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -157,33 +205,69 @@
       <!-- HOME PAGE -->
       <section class="page-section" data-section="home">
 
+        <!-- HERO BANNER -->
+        <div class="hero-banner">
+          <div class="hero-bg-orbs">
+            <div class="hero-orb hero-orb--1"></div>
+            <div class="hero-orb hero-orb--2"></div>
+            <div class="hero-orb hero-orb--3"></div>
+          </div>
+          <div class="hero-content">
+            <div class="hero-left">
+              <div class="hero-tag"><i class="ti ti-sparkles"></i> Your health, today</div>
+              <h1 class="hero-title">You're in <span class="hero-title-accent">good shape</span>, Samuel.</h1>
+              <p class="hero-sub">Health score <strong>87/100</strong> · Last checkup <strong>42 days ago</strong> · 2 active meds</p>
+              <div class="hero-actions">
+                <button class="hero-btn hero-btn--primary" data-page="overview"><i class="ti ti-calendar-plus"></i> Book appointment</button>
+                <button class="hero-btn hero-btn--ghost" data-page="ai-doctor"><i class="ti ti-robot"></i> Ask AI doctor</button>
+              </div>
+            </div>
+            <div class="hero-right">
+              <div class="hero-score-ring">
+                <svg viewBox="0 0 120 120" class="score-svg">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8"/>
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="8"
+                    stroke-dasharray="314" stroke-dashoffset="40" stroke-linecap="round"
+                    transform="rotate(-90 60 60)" class="score-arc"/>
+                </svg>
+                <div class="score-inner">
+                  <span class="score-num">87</span>
+                  <span class="score-denom">/100</span>
+                  <span class="score-tag">Health</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAT CARDS -->
         <div class="stat-grid">
-          <div class="stat-card">
-            <div class="stat-icon-wrap" style="background:#E6F1FB;"><i class="ti ti-heart-rate-monitor" style="color:#185FA5;"></i></div>
+          <div class="stat-card stat-card--blue">
+            <div class="stat-icon-wrap"><i class="ti ti-heart-rate-monitor"></i></div>
             <div class="stat-body">
               <p class="stat-label">Health score</p>
               <p class="stat-value">87<span class="stat-unit">/100</span></p>
-              <p class="stat-sub">Good standing</p>
+              <p class="stat-sub stat-sub--up"><i class="ti ti-trending-up"></i> +3 this week</p>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon-wrap" style="background:#EAF3DE;"><i class="ti ti-calendar-check" style="color:#3B6D11;"></i></div>
+          <div class="stat-card stat-card--green">
+            <div class="stat-icon-wrap"><i class="ti ti-calendar-check"></i></div>
             <div class="stat-body">
               <p class="stat-label">Last checkup</p>
               <p class="stat-value" style="font-size:1.2rem;">Mar 14</p>
               <p class="stat-sub">42 days ago</p>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon-wrap" style="background:#FAEEDA;"><i class="ti ti-pill" style="color:#854F0B;"></i></div>
+          <div class="stat-card stat-card--amber">
+            <div class="stat-icon-wrap"><i class="ti ti-pill"></i></div>
             <div class="stat-body">
               <p class="stat-label">Active meds</p>
               <p class="stat-value">2</p>
-              <p class="stat-sub">1 refill due</p>
+              <p class="stat-sub stat-sub--warn"><i class="ti ti-alert-circle"></i> 1 refill due</p>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon-wrap" style="background:#FCEBEB;"><i class="ti ti-alert-triangle" style="color:#A32D2D;"></i></div>
+          <div class="stat-card stat-card--red">
+            <div class="stat-icon-wrap"><i class="ti ti-alert-triangle"></i></div>
             <div class="stat-body">
               <p class="stat-label">Allergies</p>
               <p class="stat-value">3</p>
@@ -192,101 +276,169 @@
           </div>
         </div>
 
-        <p class="home-section-label">Quick actions</p>
+        <!-- QUICK ACTIONS -->
+        <p class="section-label"><i class="ti ti-grid-dots"></i> Quick actions</p>
         <div class="quick-actions">
           <div class="qa-btn" data-page="records">
-            <div class="qa-icon" style="background:#E6F1FB;"><i class="ti ti-file-medical" style="color:#185FA5;"></i></div>
-            <span>My records</span>
+            <div class="qa-icon qa-icon--blue"><i class="ti ti-file-medical"></i></div>
+            <div class="qa-info"><span class="qa-name">My records</span><span class="qa-hint">View history</span></div>
+            <i class="ti ti-chevron-right qa-arrow"></i>
           </div>
           <div class="qa-btn" data-page="overview">
-            <div class="qa-icon" style="background:#EAF3DE;"><i class="ti ti-calendar-plus" style="color:#3B6D11;"></i></div>
-            <span>Book appt</span>
+            <div class="qa-icon qa-icon--green"><i class="ti ti-calendar-plus"></i></div>
+            <div class="qa-info"><span class="qa-name">Book appt</span><span class="qa-hint">Next: Monday</span></div>
+            <i class="ti ti-chevron-right qa-arrow"></i>
           </div>
-          <div class="qa-btn" data-page="ai-doctor">
-            <div class="qa-icon" style="background:#EEEDFE;"><i class="ti ti-robot" style="color:#534AB7;"></i></div>
-            <span>AI doctor</span>
+          <div class="qa-btn" id="openStreakModal">
+            <div class="qa-icon qa-icon--amber"><i class="ti ti-flame"></i></div>
+            <div class="qa-info"><span class="qa-name">Daily streak</span><span class="qa-hint" id="qaStreakHint">Log check-in</span></div>
+            <i class="ti ti-chevron-right qa-arrow"></i>
           </div>
           <div class="qa-btn qa-btn--sos" data-page="emergency">
-            <div class="qa-icon" style="background:#FCEBEB;"><i class="ti ti-ambulance" style="color:#A32D2D;"></i></div>
-            <span>Emergency</span>
+            <div class="qa-icon qa-icon--red"><i class="ti ti-ambulance"></i></div>
+            <div class="qa-info"><span class="qa-name">Emergency</span><span class="qa-hint">Campus SOS</span></div>
+            <i class="ti ti-chevron-right qa-arrow"></i>
           </div>
         </div>
 
-        <div class="home-two-col">
+        <!-- MAIN CONTENT GRID -->
+        <div class="content-grid">
 
-          <!-- STREAK CARD -->
-          <div class="card streak-card">
+          <!-- LEFT: Timeline + wellness -->
+          <div class="content-left">
 
-            <div class="streak-top">
-              <div class="streak-flame-wrap">
-                <div class="streak-flame-bg" id="streakFlameBg">
-                  <span class="streak-flame-emoji" id="streakFlameEmoji">🔥</span>
-                </div>
-                <div>
-                  <div class="streak-number-row">
-                    <span class="streak-number" id="streakCount">0</span>
-                    <span class="streak-day-label">day streak</span>
+            <!-- Upcoming -->
+            <div class="card card--elevated">
+              <div class="card-hdr">
+                <div class="card-hdr-left"><i class="ti ti-calendar-event"></i><span>Upcoming</span></div>
+                <button class="card-hdr-action">See all <i class="ti ti-arrow-right"></i></button>
+              </div>
+              <div class="timeline">
+                <div class="timeline-item timeline-item--today">
+                  <div class="timeline-dot timeline-dot--blue"></div>
+                  <div class="timeline-line"></div>
+                  <div class="timeline-body">
+                    <span class="timeline-badge timeline-badge--blue">Today</span>
+                    <p class="timeline-title">Amoxicillin refill due</p>
+                    <p class="timeline-sub">Visit pharmacy — 1 pill remaining</p>
                   </div>
-                  <p class="streak-sub-label" id="streakSubLabel">Start your streak today!</p>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot timeline-dot--green"></div>
+                  <div class="timeline-line"></div>
+                  <div class="timeline-body">
+                    <span class="timeline-badge timeline-badge--green">Mon, Jun 2</span>
+                    <p class="timeline-title">Dental checkup</p>
+                    <p class="timeline-sub">Campus Health Center · 9:00 AM</p>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot timeline-dot--purple"></div>
+                  <div class="timeline-body">
+                    <span class="timeline-badge timeline-badge--purple">Jun 14</span>
+                    <p class="timeline-title">Annual physical</p>
+                    <p class="timeline-sub">Dr. Okafor · Block C Clinic</p>
+                  </div>
                 </div>
               </div>
-              <div class="streak-xp-col">
-                <p class="streak-xp-val" id="streakXP">0 XP</p>
-                <p class="streak-xp-label">total points</p>
+            </div>
+
+            <!-- Wellness tips -->
+            <div class="card card--elevated">
+              <div class="card-hdr">
+                <div class="card-hdr-left"><i class="ti ti-sparkles"></i><span>Wellness tips</span></div>
+              </div>
+              <div class="wellness-list">
+                <div class="wellness-item wellness-item--purple">
+                  <div class="wellness-icon"><i class="ti ti-moon-stars"></i></div>
+                  <div><p class="wellness-title">Sleep</p><p class="wellness-body">Aim for 7–8 hours before exams — it consolidates memory better than cramming.</p></div>
+                </div>
+                <div class="wellness-item wellness-item--green">
+                  <div class="wellness-icon"><i class="ti ti-salad"></i></div>
+                  <div><p class="wellness-title">Nutrition</p><p class="wellness-body">Don't skip breakfast on long lecture days. Your brain runs on glucose.</p></div>
+                </div>
+                <div class="wellness-item wellness-item--blue">
+                  <div class="wellness-icon"><i class="ti ti-brain"></i></div>
+                  <div><p class="wellness-title">Mental health</p><p class="wellness-body">Take 5-min breathing breaks between study sessions to reset focus.</p></div>
+                </div>
               </div>
             </div>
-
-            <div class="streak-level-row">
-              <span class="streak-level-badge" id="streakLevelBadge" style="background:#E6F1FB;color:#0C447C;">
-                <i class="ti ti-shield"></i>
-                <span id="streakLevelName">Health Starter</span>
-              </span>
-              <span class="streak-level-next" id="streakLevelNext">100 XP to next level</span>
-            </div>
-            <div class="streak-bar-track">
-              <div class="streak-bar-fill" id="streakBarFill" style="width:0%"></div>
-            </div>
-
-            <div class="streak-week" id="streakWeek"></div>
-
-            <div class="streak-divider"></div>
-
-            <div class="checkin-header">
-              <span class="checkin-title">Today's check-in</span>
-              <span class="checkin-status" id="checkinStatus">Answer all to log streak</span>
-            </div>
-
-            <div class="checkin-questions" id="checkinQuestions"></div>
-
-            <button class="checkin-submit" id="checkinSubmit" disabled>Log today's check-in</button>
-            <div class="checkin-toast" id="checkinToast"></div>
-
-            <div class="streak-divider" style="margin-top:1rem;"></div>
-            <p class="milestone-title"><i class="ti ti-trophy"></i> Milestone badges</p>
-            <div class="milestones-grid" id="milestonesGrid"></div>
 
           </div>
 
-          <!-- RIGHT COLUMN -->
-          <div class="home-right-col">
-            <div class="card">
-              <div class="card-header-row"><i class="ti ti-bell"></i><span class="card-title-text">Recent alerts</span></div>
-              <div class="alert-list">
-                <div class="alert-row"><span class="alert-dot" style="background:#3aa0ed;"></span><div><p class="alert-tag">Appointment reminder</p><p class="alert-text">Dental checkup — Monday 9 AM</p></div></div>
-                <div class="alert-row"><span class="alert-dot" style="background:#BA7517;"></span><div><p class="alert-tag">Refill due</p><p class="alert-text">Amoxicillin running low</p></div></div>
-                <div class="alert-row"><span class="alert-dot" style="background:#3B6D11;"></span><div><p class="alert-tag">Health tip</p><p class="alert-text">Stay hydrated — aim for 2L/day</p></div></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header-row"><i class="ti ti-sparkles"></i><span class="card-title-text">Wellness tips</span></div>
-              <div class="alert-list">
-                <div class="alert-row"><span class="alert-dot" style="background:#7F77DD;"></span><div><p class="alert-tag">Sleep</p><p class="alert-text">Aim for 7–8 hours before exams</p></div></div>
-                <div class="alert-row"><span class="alert-dot" style="background:#3B6D11;"></span><div><p class="alert-tag">Nutrition</p><p class="alert-text">Don't skip breakfast on long lecture days</p></div></div>
-                <div class="alert-row"><span class="alert-dot" style="background:#3aa0ed;"></span><div><p class="alert-tag">Mental health</p><p class="alert-text">Take 5-min breaks between study sessions</p></div></div>
-              </div>
-            </div>
-          </div>
+          <!-- RIGHT: Streak teaser + alerts -->
+          <div class="content-right">
 
+            <!-- Streak teaser card -->
+            <div class="streak-teaser" id="streakTeaserCard">
+              <div class="streak-teaser-bg">
+                <div class="st-orb st-orb--1"></div>
+                <div class="st-orb st-orb--2"></div>
+              </div>
+              <div class="streak-teaser-content">
+                <div class="st-top">
+                  <div class="st-flame-wrap">
+                    <div class="st-flame-bg"><span id="stFlameEmoji">🔥</span></div>
+                    <div>
+                      <div class="st-num-row"><span class="st-num" id="stNum">0</span><span class="st-label">day streak</span></div>
+                      <p class="st-sub" id="stSub">Start your streak!</p>
+                    </div>
+                  </div>
+                  <div class="st-xp"><span class="st-xp-val" id="stXp">0 XP</span><span class="st-xp-label">earned</span></div>
+                </div>
+
+                <div class="st-level-row">
+                  <span class="st-level-chip" id="stLevelChip"><i class="ti ti-shield"></i><span id="stLevelName">Health Starter</span></span>
+                  <span class="st-level-next" id="stLevelNext">100 XP to level up</span>
+                </div>
+                <div class="st-bar-track"><div class="st-bar-fill" id="stBarFill" style="width:0%"></div></div>
+
+                <div class="st-week" id="stWeek"></div>
+
+                <button class="st-cta" id="openStreakModal2">
+                  <i class="ti ti-clipboard-check"></i>
+                  <span id="stCtaText">Log today's check-in</span>
+                  <i class="ti ti-arrow-right"></i>
+                </button>
+              </div>
+              <div class="st-milestones">
+                <p class="st-milestones-label"><i class="ti ti-trophy"></i> Badges</p>
+                <div class="st-milestones-row" id="stMilestonesRow"></div>
+              </div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="card card--elevated">
+              <div class="card-hdr">
+                <div class="card-hdr-left"><i class="ti ti-bell"></i><span>Recent alerts</span></div>
+                <span class="card-hdr-badge">3</span>
+              </div>
+              <div class="alert-list">
+                <div class="alert-row">
+                  <div class="alert-dot-wrap"><span class="alert-dot alert-dot--blue"></span></div>
+                  <div class="alert-body">
+                    <div class="alert-top"><p class="alert-tag">Appointment reminder</p><span class="alert-time">2h ago</span></div>
+                    <p class="alert-text">Dental checkup — Monday 9 AM</p>
+                  </div>
+                </div>
+                <div class="alert-row">
+                  <div class="alert-dot-wrap"><span class="alert-dot alert-dot--amber"></span></div>
+                  <div class="alert-body">
+                    <div class="alert-top"><p class="alert-tag">Refill due</p><span class="alert-time">1d ago</span></div>
+                    <p class="alert-text">Amoxicillin running low — 1 pill left</p>
+                  </div>
+                </div>
+                <div class="alert-row">
+                  <div class="alert-dot-wrap"><span class="alert-dot alert-dot--green"></span></div>
+                  <div class="alert-body">
+                    <div class="alert-top"><p class="alert-tag">Health tip</p><span class="alert-time">2d ago</span></div>
+                    <p class="alert-text">Stay hydrated — aim for 2L of water daily</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -299,7 +451,6 @@
       <section class="page-section" data-section="emergency" style="display:none;"><div class="page-placeholder"><i class="ti ti-ambulance"></i><p>Emergency — coming soon</p></div></section>
       <section class="page-section" data-section="ai-doctor" style="display:none;"><div class="page-placeholder"><i class="ti ti-robot"></i><p>AI doctor — coming soon</p></div></section>
       <section class="page-section" data-section="messages" style="display:none;"><div class="page-placeholder"><i class="ti ti-messages"></i><p>Messages — coming soon</p></div></section>
-
     </div>
   </div>
 
@@ -313,7 +464,11 @@ function goToPage(target) {
   closeSidebar();
 }
 navItems.forEach(item => item.addEventListener('click', e => { e.preventDefault(); goToPage(item.dataset.page); }));
-document.querySelectorAll('.qa-btn[data-page]').forEach(btn => btn.addEventListener('click', () => goToPage(btn.dataset.page)));
+document.querySelectorAll('[data-page]').forEach(btn => {
+  if (!btn.classList.contains('nav-item')) {
+    btn.addEventListener('click', () => goToPage(btn.dataset.page));
+  }
+});
 
 /* ── MOBILE SIDEBAR ── */
 const sidebar = document.getElementById('sidebar');
@@ -366,18 +521,19 @@ const QUESTIONS = [
   { id:'mental',   emoji:'🧘', bg:'#FBEAF0', main:"How's your mental health today?",          sub:'No stress is a health win',            pts:10        },
 ];
 const MILESTONES = [
-  { emoji:'⭐', name:'First step',   req:'3-day streak',  days:3  },
-  { emoji:'🏅', name:'Week warrior', req:'7-day streak',  days:7  },
-  { emoji:'💪', name:'Iron health',  req:'14-day streak', days:14 },
-  { emoji:'👑', name:'Legend',       req:'30-day streak', days:30 },
+  { emoji:'⭐', name:'First step',   req:'3 days',  days:3  },
+  { emoji:'🏅', name:'Week warrior', req:'7 days',  days:7  },
+  { emoji:'💪', name:'Iron health',  req:'14 days', days:14 },
+  { emoji:'👑', name:'Legend',       req:'30 days', days:30 },
 ];
 function getLevel(xp) {
-  if (xp < 100) return { name:'Health Starter',  bg:'#E6F1FB', color:'#0C447C', next:100,  prev:0   };
-  if (xp < 200) return { name:'Wellness Rookie', bg:'#EAF3DE', color:'#27500A', next:200,  prev:100 };
-  if (xp < 400) return { name:'Health Guardian', bg:'#FAEEDA', color:'#633806', next:400,  prev:200 };
-  if (xp < 700) return { name:'Vitality Pro',    bg:'#EEEDFE', color:'#3C3489', next:700,  prev:400 };
-  return               { name:'Campus Legend',   bg:'#FCEBEB', color:'#791F1F', next:null, prev:700 };
+  if (xp < 100) return { name:'Health Starter',  bg:'#E6F1FB', color:'#0C447C', chip:'#185FA5', next:100,  prev:0   };
+  if (xp < 200) return { name:'Wellness Rookie', bg:'#EAF3DE', color:'#27500A', chip:'#3B6D11', next:200,  prev:100 };
+  if (xp < 400) return { name:'Health Guardian', bg:'#FAEEDA', color:'#633806', chip:'#854F0B', next:400,  prev:200 };
+  if (xp < 700) return { name:'Vitality Pro',    bg:'#EEEDFE', color:'#3C3489', chip:'#534AB7', next:700,  prev:400 };
+  return               { name:'Campus Legend',   bg:'#FCEBEB', color:'#791F1F', chip:'#A32D2D', next:null, prev:700 };
 }
+
 let streak = JSON.parse(localStorage.getItem('cc_streak') || 'null') || {
   count:0, xp:0, answers:{}, submitted:false,
   week:[false,false,false,false,false,false,false], lastDate:null
@@ -390,109 +546,133 @@ let streak = JSON.parse(localStorage.getItem('cc_streak') || 'null') || {
   }
 })();
 function saveStreak() { localStorage.setItem('cc_streak', JSON.stringify(streak)); }
-function renderWeek() {
+
+/* ── MODAL open/close ── */
+const modalOverlay = document.getElementById('streakModalOverlay');
+const modalEl = document.getElementById('streakModal');
+
+function openStreakModal() {
+  renderModal();
+  modalOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeStreakModal() {
+  modalOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+  renderTeaser();
+}
+document.getElementById('streakModalClose').addEventListener('click', closeStreakModal);
+modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeStreakModal(); });
+document.getElementById('openStreakModal').addEventListener('click', openStreakModal);
+document.getElementById('openStreakModal2').addEventListener('click', openStreakModal);
+
+/* ── MODAL: render header ── */
+function renderModalHeader() {
+  const lv = getLevel(streak.xp);
+  document.getElementById('smStreakNum').textContent = streak.count;
+  document.getElementById('smXP').textContent = streak.xp + ' XP';
+  const chip = document.getElementById('smLevelChip');
+  chip.style.background = lv.bg; chip.style.color = lv.color;
+  document.getElementById('smLevelName').textContent = lv.name;
+  if (lv.next) {
+    const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
+    document.getElementById('smBarFill').style.width = pct + '%';
+    document.getElementById('smBarGlow').style.left = pct + '%';
+    document.getElementById('smLevelNext').textContent = (lv.next - streak.xp) + ' XP to next level';
+  } else {
+    document.getElementById('smBarFill').style.width = '100%';
+    document.getElementById('smBarGlow').style.left = '100%';
+    document.getElementById('smLevelNext').textContent = 'Max level reached! 🎉';
+  }
+  const sub = document.getElementById('smStreakSub');
+  sub.textContent = streak.count >= 7 ? "You're on fire! 🔥" : streak.count >= 3 ? 'Keep it going!' : 'Start your streak today!';
+}
+
+/* ── MODAL: render week ── */
+function renderModalWeek() {
   const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const wrap = document.getElementById('streakWeek');
+  const wrap = document.getElementById('smWeek');
   wrap.innerHTML = '';
   days.forEach((d,i) => {
     const done = streak.week[i];
     const el = document.createElement('div');
-    el.className = 'streak-day';
-    el.innerHTML = `<div class="streak-day-circle${done?' done':''}">${done?'🔥':'·'}</div><span class="streak-day-name">${d}</span>`;
+    el.className = 'sm-day';
+    el.innerHTML = `<div class="sm-day-circle${done?' sm-day-done':''}">${done?'🔥':'·'}</div><span class="sm-day-name">${d}</span>`;
     wrap.appendChild(el);
   });
 }
-function renderQuestions() {
-  const wrap = document.getElementById('checkinQuestions');
+
+/* ── MODAL: render questions ── */
+function renderModalQuestions() {
+  const wrap = document.getElementById('smQuestions');
   wrap.innerHTML = '';
   QUESTIONS.forEach(q => {
     const ans = streak.answers[q.id];
     const row = document.createElement('div');
-    row.className = `checkin-q${ans==='yes'?' q-yes':ans?' q-no':''}`;
+    row.className = `sm-q${ans==='yes'?' sm-q--yes':ans==='no'?' sm-q--no':''}`;
     row.innerHTML = `
-      <div class="checkin-q-icon" style="background:${q.bg}">${q.emoji}</div>
-      <div class="checkin-q-text">
-        <p class="checkin-q-main">${q.main}</p>
-        <p class="checkin-q-sub">${q.sub}</p>
+      <div class="sm-q-icon" style="background:${q.bg}">${q.emoji}</div>
+      <div class="sm-q-text">
+        <p class="sm-q-main">${q.main}</p>
+        <p class="sm-q-sub">${q.sub}</p>
       </div>
-      <div class="checkin-q-btns">
-        ${q.na?`<button class="cq-btn${ans==='na'?' cq-yes':''}" data-id="${q.id}" data-val="na">N/A</button>`:''}
-        <button class="cq-btn${ans==='no'?' cq-no':''}" data-id="${q.id}" data-val="no">No</button>
-        <button class="cq-btn${ans==='yes'?' cq-yes':''}" data-id="${q.id}" data-val="yes">Yes</button>
+      <div class="sm-q-btns">
+        ${q.na?`<button class="sm-cq-btn${ans==='na'?' sm-cq--yes':''}" data-id="${q.id}" data-val="na">N/A</button>`:''}
+        <button class="sm-cq-btn${ans==='no'?' sm-cq--no':''}" data-id="${q.id}" data-val="no">No</button>
+        <button class="sm-cq-btn${ans==='yes'?' sm-cq--yes':''}" data-id="${q.id}" data-val="yes">Yes</button>
       </div>`;
     wrap.appendChild(row);
   });
-  wrap.querySelectorAll('.cq-btn').forEach(btn => {
+  wrap.querySelectorAll('.sm-cq-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (streak.submitted) return;
       streak.answers[btn.dataset.id] = btn.dataset.val;
-      saveStreak(); renderQuestions(); updateSubmitBtn();
+      saveStreak(); renderModalQuestions(); updateModalSubmit();
     });
   });
 }
-function updateSubmitBtn() {
+
+function updateModalSubmit() {
   const answered = QUESTIONS.filter(q => streak.answers[q.id]).length;
   const remaining = QUESTIONS.length - answered;
-  const btn = document.getElementById('checkinSubmit');
-  const status = document.getElementById('checkinStatus');
+  const btn = document.getElementById('smSubmit');
+  const txt = document.getElementById('smSubmitText');
+  const status = document.getElementById('smDividerStatus');
   if (streak.submitted) {
-    btn.textContent = '✓ Already logged today'; btn.disabled = true; btn.classList.remove('ready');
+    txt.textContent = '✓ Check-in logged!'; btn.disabled = true; btn.classList.add('sm-submit--done');
     status.textContent = 'See you tomorrow!';
   } else if (remaining === 0) {
-    btn.disabled = false; btn.classList.add('ready'); btn.textContent = "Log today's check-in →";
+    btn.disabled = false; btn.classList.add('sm-submit--ready'); txt.textContent = "Log today's streak →";
     status.textContent = 'All done — ready to log!';
   } else {
-    btn.disabled = true; btn.classList.remove('ready');
-    btn.textContent = `${remaining} question${remaining>1?'s':''} remaining`;
+    btn.disabled = true; btn.classList.remove('sm-submit--ready');
+    txt.textContent = `${remaining} question${remaining>1?'s':''} remaining`;
     status.textContent = `${answered} of ${QUESTIONS.length} answered`;
   }
 }
-function renderStreakHeader() {
-  document.getElementById('streakCount').textContent = streak.count;
-  document.getElementById('streakXP').textContent = streak.xp + ' XP';
-  const lv = getLevel(streak.xp);
-  const badge = document.getElementById('streakLevelBadge');
-  badge.style.background = lv.bg; badge.style.color = lv.color;
-  document.getElementById('streakLevelName').textContent = lv.name;
-  if (lv.next) {
-    const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
-    document.getElementById('streakBarFill').style.width = pct + '%';
-    document.getElementById('streakLevelNext').textContent = (lv.next - streak.xp) + ' XP to next level';
-  } else {
-    document.getElementById('streakBarFill').style.width = '100%';
-    document.getElementById('streakLevelNext').textContent = 'Max level reached!';
-  }
-  document.getElementById('streakSubLabel').textContent =
-    streak.count >= 7 ? "You're on fire! 🔥" : streak.count >= 3 ? 'Keep it going!' : 'Start your streak today!';
-}
-function renderMilestones() {
-  const wrap = document.getElementById('milestonesGrid');
+
+function renderModalMilestones() {
+  const wrap = document.getElementById('smMilestonesGrid');
   wrap.innerHTML = '';
   MILESTONES.forEach(m => {
     const unlocked = streak.count >= m.days;
     const el = document.createElement('div');
-    el.className = `milestone-badge${unlocked?'':' locked'}`;
-    if (unlocked) el.style.background = '#FAEEDA';
-    el.innerHTML = `<span class="milestone-emoji">${m.emoji}</span><span class="milestone-name">${m.name}</span><span class="milestone-req">${m.req}</span>`;
+    el.className = `sm-milestone${unlocked?' sm-milestone--unlocked':''}`;
+    el.innerHTML = `<span class="sm-milestone-emoji">${m.emoji}</span><span class="sm-milestone-name">${m.name}</span><span class="sm-milestone-req">${m.req}</span>`;
     wrap.appendChild(el);
   });
 }
-function showToast(won, pts, yes) {
-  const t = document.getElementById('checkinToast');
-  t.className = `checkin-toast show ${won?'toast-win':'toast-loss'}`;
-  t.textContent = won
-    ? `🔥 Streak extended! +${pts} XP earned. ${yes}/${QUESTIONS.length} habits logged.`
-    : `Streak reset. Only ${yes}/${QUESTIONS.length} habits logged. Tomorrow is a fresh start!`;
+
+function renderModal() {
+  renderModalHeader();
+  renderModalWeek();
+  renderModalQuestions();
+  updateModalSubmit();
+  renderModalMilestones();
 }
-function animateFlame() {
-  document.getElementById('streakFlameEmoji').classList.add('pulse');
-  document.getElementById('streakFlameBg').classList.add('hot');
-  setTimeout(() => {
-    document.getElementById('streakFlameEmoji').classList.remove('pulse');
-    document.getElementById('streakFlameBg').classList.remove('hot');
-  }, 600);
-}
-document.getElementById('checkinSubmit').addEventListener('click', () => {
+
+/* ── Modal submit ── */
+document.getElementById('smSubmit').addEventListener('click', () => {
   if (streak.submitted) return;
   const yesCount = Object.values(streak.answers).filter(a => a==='yes'||a==='na').length;
   const earned = yesCount * 10;
@@ -501,14 +681,79 @@ document.getElementById('checkinSubmit').addEventListener('click', () => {
     streak.count += 1; streak.xp += earned;
     const dayIdx = (new Date().getDay() + 6) % 7;
     streak.week[dayIdx] = true;
-    animateFlame(); showToast(true, earned, yesCount);
+    showModalToast(true, earned, yesCount);
+    /* pulse the flame */
+    const flameEl = document.getElementById('smFlameEmoji');
+    const ringEl = document.getElementById('smFlameRing');
+    flameEl.classList.add('sm-flame-pulse');
+    ringEl.classList.add('sm-ring-burst');
+    setTimeout(() => { flameEl.classList.remove('sm-flame-pulse'); ringEl.classList.remove('sm-ring-burst'); }, 700);
   } else {
-    streak.count = 0; showToast(false, earned, yesCount);
+    streak.count = 0;
+    showModalToast(false, earned, yesCount);
   }
   streak.submitted = true; saveStreak();
-  renderStreakHeader(); renderWeek(); renderMilestones(); updateSubmitBtn();
+  renderModal(); renderTeaser();
 });
-renderStreakHeader(); renderWeek(); renderQuestions(); updateSubmitBtn(); renderMilestones();
+
+function showModalToast(won, pts, yes) {
+  const t = document.getElementById('smToast');
+  t.className = `sm-toast sm-toast--show ${won?'sm-toast--win':'sm-toast--loss'}`;
+  t.textContent = won
+    ? `🔥 Streak extended! +${pts} XP · ${yes}/${QUESTIONS.length} habits logged`
+    : `Streak reset. Only ${yes}/${QUESTIONS.length} habits logged. Tomorrow is fresh!`;
+}
+
+/* ── TEASER card render ── */
+function renderTeaser() {
+  const lv = getLevel(streak.xp);
+  document.getElementById('stNum').textContent = streak.count;
+  document.getElementById('stXp').textContent = streak.xp + ' XP';
+  const chip = document.getElementById('stLevelChip');
+  chip.style.background = lv.bg; chip.style.color = lv.color;
+  document.getElementById('stLevelName').textContent = lv.name;
+  if (lv.next) {
+    const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
+    document.getElementById('stBarFill').style.width = pct + '%';
+    document.getElementById('stLevelNext').textContent = (lv.next - streak.xp) + ' XP to level up';
+  } else {
+    document.getElementById('stBarFill').style.width = '100%';
+    document.getElementById('stLevelNext').textContent = 'Max level!';
+  }
+  document.getElementById('stSub').textContent = streak.count >= 7 ? "On fire! 🔥" : streak.count >= 3 ? 'Keep it up!' : 'Start today!';
+  document.getElementById('stCtaText').textContent = streak.submitted ? '✓ Logged today' : "Log today's check-in";
+
+  /* week */
+  const days = ['M','T','W','T','F','S','S'];
+  const wrap = document.getElementById('stWeek');
+  wrap.innerHTML = '';
+  days.forEach((d,i) => {
+    const done = streak.week[i];
+    const el = document.createElement('div');
+    el.className = 'st-day';
+    el.innerHTML = `<div class="st-day-circle${done?' st-day-done':''}">${done?'🔥':d}</div>`;
+    wrap.appendChild(el);
+  });
+
+  /* quick actions hint */
+  const qaHint = document.getElementById('qaStreakHint');
+  if (qaHint) qaHint.textContent = streak.submitted ? streak.count + ' day streak' : 'Log check-in';
+
+  /* mini milestones in teaser */
+  const row = document.getElementById('stMilestonesRow');
+  if (row) {
+    row.innerHTML = '';
+    MILESTONES.forEach(m => {
+      const unlocked = streak.count >= m.days;
+      const el = document.createElement('div');
+      el.className = `st-milestone${unlocked?' st-milestone--unlocked':''}`;
+      el.title = m.name + ' — ' + m.req;
+      el.textContent = m.emoji;
+      row.appendChild(el);
+    });
+  }
+}
+renderTeaser();
 </script>
 </body>
 </html>
