@@ -1,23 +1,813 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusCare</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+
+  <style>
+    /* ── NOTIFICATION DROPDOWN ── */
+    .notif-dropdown {
+      position: absolute;
+      top: calc(100% + 14px);
+      right: -60px;
+      width: 340px;
+      background: var(--color-bg-dropdown);
+      border: 1px solid var(--color-border-dropdown);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-dropdown);
+      padding: 0.5rem;
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px) scale(0.97);
+      transform-origin: top right;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .notif-dropdown.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0) scale(1);
+    }
+
+    .notif-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      right: 76px;
+      width: 12px;
+      height: 12px;
+      background: var(--color-bg-dropdown);
+      border-left: 1px solid var(--color-border-dropdown);
+      border-top: 1px solid var(--color-border-dropdown);
+      transform: rotate(45deg);
+      border-radius: 2px 0 0 0;
+    }
+
+    .notif-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0.5rem 0.5rem;
+    }
+
+    .notif-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    .notif-mark-all {
+      font-size: 0.7rem;
+      color: var(--color-primary);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .notif-mark-all:hover {
+      opacity: 0.7;
+    }
+
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.6rem 0.5rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    .notif-item:hover {
+      background: var(--color-bg-dropdown-hover);
+    }
+
+    .notif-item.unread::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+
+    .notif-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .notif-dot--blue {
+      background: #E6F1FB;
+      color: #185FA5;
+    }
+
+    .notif-dot--amber {
+      background: #FAEEDA;
+      color: #854F0B;
+    }
+
+    .notif-dot--green {
+      background: #EAF3DE;
+      color: #3B6D11;
+    }
+
+    .notif-dot--red {
+      background: #FCEBEB;
+      color: #A32D2D;
+    }
+
+    .notif-body {
+      flex: 1;
+      min-width: 0;
+      padding-right: 12px;
+    }
+
+    .notif-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 1px;
+    }
+
+    .notif-text {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    .notif-time {
+      font-size: 0.65rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .notif-empty {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 16px;
+      height: 16px;
+      background: #E53935;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.55rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--color-bg-topbar-pill);
+      line-height: 1;
+    }
+
+    .notification {
+      position: relative;
+    }
+
+    .topbar-pill {
+      position: relative;
+    }
+
+    /* ── EMERGENCY PAGE ── */
+    .emergency-page {
+      padding: 0;
+    }
+
+    .emergency-hero {
+      background: linear-gradient(135deg, #7B0000 0%, #A32D2D 50%, #C0392B 100%);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .emergency-hero::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      top: -100px;
+      right: -60px;
+    }
+
+    .emergency-hero-content {
+      position: relative;
+    }
+
+    .emergency-hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.9);
+      padding: 4px 14px;
+      margin-bottom: 0.75rem;
+    }
+
+    .emergency-hero h1 {
+      font-family: var(--font-base);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .emergency-hero p {
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .emergency-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .sos-card {
+      background: linear-gradient(135deg, #7B0000, #A32D2D);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 24px rgba(163, 45, 45, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sos-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(163, 45, 45, 0.55);
+    }
+
+    .sos-card:active {
+      transform: scale(0.97);
+    }
+
+    .sos-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1rem;
+      animation: sosPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes sosPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 0 12px rgba(255, 255, 255, 0);
+      }
+    }
+
+    .sos-card h3 {
+      font-family: var(--font-base);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .sos-card p {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .chat-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-card);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow-card);
+    }
+
+    .chat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .chat-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #FAEEDA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1rem;
+      color: #854F0B;
+    }
+
+    .chat-card h3 {
+      font-family: var(--font-base);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+
+    .chat-card p {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+
+    .location-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-card);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 1.25rem;
+    }
+
+    .location-card-hdr {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .location-card-hdr i {
+      color: #A32D2D;
+      font-size: 1.2rem;
+    }
+
+    .location-status {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      border-radius: var(--radius-md);
+      background: #FCEBEB;
+      border: 1px solid #F09595;
+      margin-bottom: 1rem;
+    }
+
+    .location-status.active {
+      background: #EAF3DE;
+      border-color: #C0DD97;
+    }
+
+    .loc-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #A32D2D;
+      flex-shrink: 0;
+      animation: locPulse 1.5s ease-in-out infinite;
+    }
+
+    .location-status.active .loc-dot {
+      background: #3B6D11;
+    }
+
+    @keyframes locPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    .loc-status-text {
+      flex: 1;
+    }
+
+    .loc-status-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .loc-status-sub {
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      margin-top: 1px;
+    }
+
+    .loc-share-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: #A32D2D;
+      color: #fff;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+
+    .location-status.active .loc-share-btn {
+      background: #3B6D11;
+    }
+
+    .loc-share-btn:hover {
+      opacity: 0.85;
+    }
+
+    .campus-spots-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .campus-spots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .campus-spot {
+      padding: 0.6rem 0.5rem;
+      border-radius: var(--radius-md);
+      background: var(--color-bg-dropdown-hover);
+      border: 1.5px solid var(--color-border-card);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      font-weight: 500;
+    }
+
+    .campus-spot:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+
+    .campus-spot.selected {
+      border-color: #A32D2D;
+      color: #A32D2D;
+      background: #FCEBEB;
+      font-weight: 700;
+    }
+
+    .campus-spot i {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 3px;
+    }
+
+    .loc-coords {
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      font-family: monospace;
+      padding: 0.5rem 0.75rem;
+      background: var(--color-bg-dropdown-hover);
+      border-radius: var(--radius-sm);
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .loc-coords.show {
+      display: block;
+    }
+
+    .emergency-contacts {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ec-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+    }
+
+    .ec-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .ec-icon--red {
+      background: #FCEBEB;
+      color: #A32D2D;
+    }
+
+    .ec-icon--blue {
+      background: #E6F1FB;
+      color: #185FA5;
+    }
+
+    .ec-icon--green {
+      background: #EAF3DE;
+      color: #3B6D11;
+    }
+
+    .ec-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ec-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .ec-number {
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      font-family: monospace;
+    }
+
+    .ec-actions {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .ec-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border-card);
+      background: var(--color-bg-dropdown-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .ec-btn:hover {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+
+    .ec-btn--call:hover {
+      background: #3B6D11;
+      border-color: #3B6D11;
+    }
+
+    .ec-btn--chat:hover {
+      background: #185FA5;
+      border-color: #185FA5;
+    }
+
+    /* Emergency modal */
+    .sos-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(80, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .sos-modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .sos-modal {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4);
+      transform: scale(0.9);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="dark"] .sos-modal {
+      background: #1a1a2e;
+    }
+
+    .sos-modal-overlay.open .sos-modal {
+      transform: scale(1);
+    }
+
+    .sos-countdown {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #FCEBEB;
+      border: 4px solid #A32D2D;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-family: var(--font-base);
+    }
+
+    .sos-countdown-num {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #A32D2D;
+      line-height: 1;
+    }
+
+    .sos-countdown-label {
+      font-size: 0.65rem;
+      color: #A32D2D;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sos-modal h2 {
+      font-family: var(--font-base);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #A32D2D;
+      margin-bottom: 0.5rem;
+    }
+
+    .sos-modal p {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .sos-modal-btns {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .sos-cancel-btn {
+      flex: 1;
+      padding: 0.875rem;
+      background: var(--color-bg-dropdown-hover);
+      border: 1px solid var(--color-border-card);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .sos-cancel-btn:hover {
+      background: var(--color-primary-light);
+    }
+
+    .sos-call-now-btn {
+      flex: 1;
+      padding: 0.875rem;
+      background: linear-gradient(135deg, #7B0000, #A32D2D);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .sos-call-now-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Spot selected indicator */
+    .selected-spot-indicator {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: #A32D2D;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .selected-spot-indicator.show {
+      display: flex;
+    }
+
+    @media (max-width: 768px) {
+      .emergency-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .campus-spots {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .notif-dropdown {
+        right: -80px;
+        width: 300px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
   <script src="campuscare-session.js"></script>
+
+  <!-- SOS COUNTDOWN MODAL -->
+  <div class="sos-modal-overlay" id="sosModalOverlay">
+    <div class="sos-modal">
+      <div class="sos-countdown">
+        <span class="sos-countdown-num" id="sosCountdownNum">5</span>
+        <span class="sos-countdown-label">seconds</span>
+      </div>
+      <h2>🚨 Calling Emergency!</h2>
+      <p>Contacting campus emergency services at <strong>+2347016204090</strong>.<br>Your location will be shared
+        automatically. Cancel if this was a mistake.</p>
+      <div class="sos-modal-btns">
+        <button class="sos-cancel-btn" id="sosCancelBtn">Cancel</button>
+        <a href="tel:+2347016204090" class="sos-call-now-btn" id="sosCallNowBtn">Call Now</a>
+      </div>
+    </div>
+  </div>
 
   <!-- STREAK MODAL OVERLAY -->
   <div class="streak-modal-overlay" id="streakModalOverlay">
     <div class="streak-modal" id="streakModal">
       <button class="streak-modal-close" id="streakModalClose"><i class="ti ti-x"></i></button>
-
-      <!-- Modal Header -->
       <div class="sm-header">
         <div class="sm-header-glow"></div>
         <div class="sm-flame-orb" id="smFlameOrb">
@@ -36,11 +826,10 @@
           <span id="smXP">0 XP</span>
         </div>
       </div>
-
-      <!-- Level row -->
       <div class="sm-level-section">
         <div class="sm-level-row">
-          <span class="sm-level-chip" id="smLevelChip"><i class="ti ti-shield-filled"></i><span id="smLevelName">Health Starter</span></span>
+          <span class="sm-level-chip" id="smLevelChip"><i class="ti ti-shield-filled"></i><span id="smLevelName">Health
+              Starter</span></span>
           <span class="sm-level-next" id="smLevelNext">100 XP to next level</span>
         </div>
         <div class="sm-bar-track">
@@ -48,27 +837,17 @@
           <div class="sm-bar-glow" id="smBarGlow" style="left:0%"></div>
         </div>
       </div>
-
-      <!-- Week -->
       <div class="sm-week" id="smWeek"></div>
-
-      <!-- Divider -->
       <div class="sm-divider">
         <span class="sm-divider-label"><i class="ti ti-clipboard-check"></i> Today's check-in</span>
         <span class="sm-divider-status" id="smDividerStatus">Answer all to log</span>
       </div>
-
-      <!-- Questions -->
       <div class="sm-questions" id="smQuestions"></div>
-
-      <!-- Submit -->
       <button class="sm-submit" id="smSubmit" disabled>
         <span class="sm-submit-text" id="smSubmitText">Answer all questions</span>
         <i class="ti ti-arrow-right sm-submit-arrow"></i>
       </button>
       <div class="sm-toast" id="smToast"></div>
-
-      <!-- Milestones -->
       <div class="sm-milestones-section">
         <p class="sm-milestones-label"><i class="ti ti-trophy"></i> Milestone badges</p>
         <div class="sm-milestones-grid" id="smMilestonesGrid"></div>
@@ -82,7 +861,6 @@
   <div class="dashboard">
     <aside class="sidebar" id="sidebar">
       <button class="sidebar-close" id="sidebarClose" aria-label="Close menu"><i class="ti ti-x"></i></button>
-
       <div class="sidebar-logo">
         <div class="logo-icon"><i class="ti ti-heart-rate-monitor"></i></div>
         <div class="logo-text">
@@ -90,7 +868,6 @@
           <p class="logo-sub">A healthy life for all</p>
         </div>
       </div>
-
       <nav class="sidebar-nav">
         <p class="nav-group-label">Main</p>
         <a href="#" class="nav-item active" data-page="home">
@@ -116,19 +893,21 @@
         </a>
         <a href="#" class="nav-item" data-page="emergency">
           <div class="link-name"><i class="ti ti-ambulance"></i><span>Emergency</span></div>
-          <div class="nav-item-notif" style="background:#FCEBEB;color:#A32D2D;font-weight:600;font-size:0.6rem;width:auto;padding:0 5px;">SOS</div>
+          <div class="nav-item-notif"
+            style="background:#FCEBEB;color:#A32D2D;font-weight:600;font-size:0.6rem;width:auto;padding:0 5px;">SOS
+          </div>
         </a>
         <p class="nav-group-label">Connect</p>
         <a href="#" class="nav-item" data-page="ai-doctor">
           <div class="link-name"><i class="ti ti-robot"></i><span>AI doctor</span></div>
-          <div class="nav-item-notif" style="background:#EAF3DE;color:#3B6D11;width:auto;padding:0 5px;font-size:0.6rem;">New</div>
+          <div class="nav-item-notif"
+            style="background:#EAF3DE;color:#3B6D11;width:auto;padding:0 5px;font-size:0.6rem;">New</div>
         </a>
         <a href="#" class="nav-item" data-page="messages">
           <div class="link-name"><i class="ti ti-messages"></i><span>Messages</span></div>
           <div class="nav-item-notif">2</div>
         </a>
       </nav>
-
       <div class="sidebar-profile">
         <div class="sidebar-profile-avatar">SA</div>
         <div>
@@ -145,31 +924,77 @@
         <div class="welcome-msg">Hey, Samuel! Glad to have you back 👋</div>
 
         <div class="topbar-pill">
-          <button class="notification" aria-label="Notifications">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/>
-              <path d="M9 17v1a3 3 0 0 0 6 0v-1"/>
-            </svg>
-          </button>
+          <!-- NOTIFICATION BELL with dropdown -->
+          <div class="dropdown-wrap" id="notifWrap">
+            <button class="notification dropdown-trigger" id="notifBtn" aria-label="Notifications">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+              </svg>
+              <span class="notif-badge" id="notifBadge">3</span>
+            </button>
+            <div class="notif-dropdown" id="notifDropdown">
+              <div class="notif-header">
+                <span class="notif-title">Notifications</span>
+                <button class="notif-mark-all" id="markAllRead">Mark all read</button>
+              </div>
+              <div class="notif-list" id="notifList">
+                <div class="notif-item unread">
+                  <div class="notif-dot notif-dot--blue"><i class="ti ti-calendar-check"></i></div>
+                  <div class="notif-body">
+                    <p class="notif-tag">Appointment reminder</p>
+                    <p class="notif-text">Dental checkup — Monday 9 AM at Campus Health Center</p>
+                    <p class="notif-time">2 hours ago</p>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-dot notif-dot--amber"><i class="ti ti-pill"></i></div>
+                  <div class="notif-body">
+                    <p class="notif-tag">Refill due</p>
+                    <p class="notif-text">Amoxicillin running low — only 1 pill remaining</p>
+                    <p class="notif-time">1 day ago</p>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-dot notif-dot--green"><i class="ti ti-heart"></i></div>
+                  <div class="notif-body">
+                    <p class="notif-tag">Health tip</p>
+                    <p class="notif-text">Stay hydrated — aim for 2L of water daily</p>
+                    <p class="notif-time">2 days ago</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="dropdown-wrap" id="settingsWrap">
             <button class="settings dropdown-trigger" aria-label="Settings" id="settingsBtn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/>
-                <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065" />
+                <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
               </svg>
             </button>
             <div class="dropdown-menu" id="settingsDropdown">
               <p class="dropdown-section-label">Account</p>
-              <div class="dropdown-item"><i class="ti ti-user"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Edit profile</span><span class="dropdown-item-sub">Name, email, photo</span></div></div>
-              <div class="dropdown-item"><i class="ti ti-lock"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Change password</span><span class="dropdown-item-sub">Update your credentials</span></div></div>
+              <div class="dropdown-item"><i class="ti ti-user"></i>
+                <div class="dropdown-item-text"><span class="dropdown-item-title">Edit profile</span><span
+                    class="dropdown-item-sub">Name, email, photo</span></div>
+              </div>
+              <div class="dropdown-item"><i class="ti ti-lock"></i>
+                <div class="dropdown-item-text"><span class="dropdown-item-title">Change password</span><span
+                    class="dropdown-item-sub">Update your credentials</span></div>
+              </div>
               <div class="dropdown-divider"></div>
               <p class="dropdown-section-label">Theme</p>
               <div class="dropdown-item theme-row">
                 <i class="ti ti-moon" id="settingsThemeIcon"></i>
-                <div class="dropdown-item-text"><span class="dropdown-item-title" id="settingsThemeLabel">Dark mode</span><span class="dropdown-item-sub">Toggle appearance</span></div>
+                <div class="dropdown-item-text"><span class="dropdown-item-title" id="settingsThemeLabel">Dark
+                    mode</span><span class="dropdown-item-sub">Toggle appearance</span></div>
                 <label class="toggle-switch" aria-label="Toggle dark mode">
                   <input type="checkbox" id="themeCheckbox" />
                   <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -179,7 +1004,8 @@
           </div>
 
           <div class="dropdown-wrap" id="profileWrap">
-            <div class="user-account dropdown-trigger" id="profileBtn" role="button" tabindex="0" aria-label="Account menu">
+            <div class="user-account dropdown-trigger" id="profileBtn" role="button" tabindex="0"
+              aria-label="Account menu">
               <img src="av3.jpg" alt="Profile">
             </div>
             <div class="dropdown-menu dropdown-menu--right" id="profileDropdown">
@@ -192,11 +1018,19 @@
                 </div>
               </div>
               <div class="dropdown-divider"></div>
-              <div class="dropdown-item"><i class="ti ti-user-circle"></i><div class="dropdown-item-text"><span class="dropdown-item-title">My profile</span></div></div>
-              <div class="dropdown-item"><i class="ti ti-file-medical"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Medical records</span></div></div>
-              <div class="dropdown-item"><i class="ti ti-id-badge"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Student ID card</span></div></div>
+              <div class="dropdown-item"><i class="ti ti-user-circle"></i>
+                <div class="dropdown-item-text"><span class="dropdown-item-title">My profile</span></div>
+              </div>
+              <div class="dropdown-item"><i class="ti ti-file-medical"></i>
+                <div class="dropdown-item-text"><span class="dropdown-item-title">Medical records</span></div>
+              </div>
+              <div class="dropdown-item"><i class="ti ti-id-badge"></i>
+                <div class="dropdown-item-text"><span class="dropdown-item-title">Student ID card</span></div>
+              </div>
               <div class="dropdown-divider"></div>
-              <div class="dropdown-item dropdown-item--danger"><i class="ti ti-logout"></i><div class="dropdown-item-text"><span class="dropdown-item-title">Log out</span></div></div>
+              <div class="dropdown-item dropdown-item--danger"><i class="ti ti-logout"></i>
+                <div class="dropdown-item-text"><span class="dropdown-item-title">Log out</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -204,8 +1038,6 @@
 
       <!-- HOME PAGE -->
       <section class="page-section" data-section="home">
-
-        <!-- HERO BANNER -->
         <div class="hero-banner">
           <div class="hero-bg-orbs">
             <div class="hero-orb hero-orb--1"></div>
@@ -215,20 +1047,24 @@
           <div class="hero-content">
             <div class="hero-left">
               <div class="hero-tag"><i class="ti ti-sparkles"></i> Your health, today</div>
-              <h1 class="hero-title">You're in <span class="hero-title-accent">good shape</span>, Samuel.</h1>
-              <p class="hero-sub">Health score <strong>87/100</strong> · Last checkup <strong>42 days ago</strong> · 2 active meds</p>
+              <h1 class="hero-title">You're in <span class="hero-title-accent">good shape</span>, <span
+                  class="hero-firstname">Samuel</span>.</h1>
+              <p class="hero-sub">Health score <strong>87/100</strong> · Last checkup <strong>42 days ago</strong> · 2
+                active meds</p>
               <div class="hero-actions">
-                <button class="hero-btn hero-btn--primary" data-page="overview"><i class="ti ti-calendar-plus"></i> Book appointment</button>
-                <button class="hero-btn hero-btn--ghost" data-page="ai-doctor"><i class="ti ti-robot"></i> Ask AI doctor</button>
+                <button class="hero-btn hero-btn--primary" data-page="overview"><i class="ti ti-calendar-plus"></i> Book
+                  appointment</button>
+                <button class="hero-btn hero-btn--ghost" data-page="ai-doctor"><i class="ti ti-robot"></i> Ask AI
+                  doctor</button>
               </div>
             </div>
             <div class="hero-right">
               <div class="hero-score-ring">
                 <svg viewBox="0 0 120 120" class="score-svg">
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8"/>
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8" />
                   <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="8"
-                    stroke-dasharray="314" stroke-dashoffset="40" stroke-linecap="round"
-                    transform="rotate(-90 60 60)" class="score-arc"/>
+                    stroke-dasharray="314" stroke-dashoffset="40" stroke-linecap="round" transform="rotate(-90 60 60)"
+                    class="score-arc" />
                 </svg>
                 <div class="score-inner">
                   <span class="score-num">87</span>
@@ -240,7 +1076,6 @@
           </div>
         </div>
 
-        <!-- STAT CARDS -->
         <div class="stat-grid">
           <div class="stat-card stat-card--blue">
             <div class="stat-icon-wrap"><i class="ti ti-heart-rate-monitor"></i></div>
@@ -276,7 +1111,6 @@
           </div>
         </div>
 
-        <!-- QUICK ACTIONS -->
         <p class="section-label"><i class="ti ti-grid-dots"></i> Quick actions</p>
         <div class="quick-actions">
           <div class="qa-btn" data-page="records">
@@ -291,7 +1125,8 @@
           </div>
           <div class="qa-btn" id="openStreakModal">
             <div class="qa-icon qa-icon--amber"><i class="ti ti-flame"></i></div>
-            <div class="qa-info"><span class="qa-name">Daily streak</span><span class="qa-hint" id="qaStreakHint">Log check-in</span></div>
+            <div class="qa-info"><span class="qa-name">Daily streak</span><span class="qa-hint" id="qaStreakHint">Log
+                check-in</span></div>
             <i class="ti ti-chevron-right qa-arrow"></i>
           </div>
           <div class="qa-btn qa-btn--sos" data-page="emergency">
@@ -301,13 +1136,8 @@
           </div>
         </div>
 
-        <!-- MAIN CONTENT GRID -->
         <div class="content-grid">
-
-          <!-- LEFT: Timeline + wellness -->
           <div class="content-left">
-
-            <!-- Upcoming -->
             <div class="card card--elevated">
               <div class="card-hdr">
                 <div class="card-hdr-left"><i class="ti ti-calendar-event"></i><span>Upcoming</span></div>
@@ -342,8 +1172,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Wellness tips -->
             <div class="card card--elevated">
               <div class="card-hdr">
                 <div class="card-hdr-left"><i class="ti ti-sparkles"></i><span>Wellness tips</span></div>
@@ -351,25 +1179,31 @@
               <div class="wellness-list">
                 <div class="wellness-item wellness-item--purple">
                   <div class="wellness-icon"><i class="ti ti-moon-stars"></i></div>
-                  <div><p class="wellness-title">Sleep</p><p class="wellness-body">Aim for 7–8 hours before exams — it consolidates memory better than cramming.</p></div>
+                  <div>
+                    <p class="wellness-title">Sleep</p>
+                    <p class="wellness-body">Aim for 7–8 hours before exams — it consolidates memory better than
+                      cramming.</p>
+                  </div>
                 </div>
                 <div class="wellness-item wellness-item--green">
                   <div class="wellness-icon"><i class="ti ti-salad"></i></div>
-                  <div><p class="wellness-title">Nutrition</p><p class="wellness-body">Don't skip breakfast on long lecture days. Your brain runs on glucose.</p></div>
+                  <div>
+                    <p class="wellness-title">Nutrition</p>
+                    <p class="wellness-body">Don't skip breakfast on long lecture days. Your brain runs on glucose.</p>
+                  </div>
                 </div>
                 <div class="wellness-item wellness-item--blue">
                   <div class="wellness-icon"><i class="ti ti-brain"></i></div>
-                  <div><p class="wellness-title">Mental health</p><p class="wellness-body">Take 5-min breathing breaks between study sessions to reset focus.</p></div>
+                  <div>
+                    <p class="wellness-title">Mental health</p>
+                    <p class="wellness-body">Take 5-min breathing breaks between study sessions to reset focus.</p>
+                  </div>
                 </div>
               </div>
             </div>
-
           </div>
 
-          <!-- RIGHT: Streak teaser + alerts -->
           <div class="content-right">
-
-            <!-- Streak teaser card -->
             <div class="streak-teaser" id="streakTeaserCard">
               <div class="streak-teaser-bg">
                 <div class="st-orb st-orb--1"></div>
@@ -380,21 +1214,23 @@
                   <div class="st-flame-wrap">
                     <div class="st-flame-bg"><span id="stFlameEmoji">🔥</span></div>
                     <div>
-                      <div class="st-num-row"><span class="st-num" id="stNum">0</span><span class="st-label">day streak</span></div>
+                      <div class="st-num-row"><span class="st-num" id="stNum">0</span><span class="st-label">day
+                          streak</span></div>
                       <p class="st-sub" id="stSub">Start your streak!</p>
                     </div>
                   </div>
-                  <div class="st-xp"><span class="st-xp-val" id="stXp">0 XP</span><span class="st-xp-label">earned</span></div>
+                  <div class="st-xp"><span class="st-xp-val" id="stXp">0 XP</span><span
+                      class="st-xp-label">earned</span></div>
                 </div>
-
                 <div class="st-level-row">
-                  <span class="st-level-chip" id="stLevelChip"><i class="ti ti-shield"></i><span id="stLevelName">Health Starter</span></span>
+                  <span class="st-level-chip" id="stLevelChip"><i class="ti ti-shield"></i><span id="stLevelName">Health
+                      Starter</span></span>
                   <span class="st-level-next" id="stLevelNext">100 XP to level up</span>
                 </div>
-                <div class="st-bar-track"><div class="st-bar-fill" id="stBarFill" style="width:0%"></div></div>
-
+                <div class="st-bar-track">
+                  <div class="st-bar-fill" id="stBarFill" style="width:0%"></div>
+                </div>
                 <div class="st-week" id="stWeek"></div>
-
                 <button class="st-cta" id="openStreakModal2">
                   <i class="ti ti-clipboard-check"></i>
                   <span id="stCtaText">Log today's check-in</span>
@@ -407,7 +1243,6 @@
               </div>
             </div>
 
-            <!-- Alerts -->
             <div class="card card--elevated">
               <div class="card-hdr">
                 <div class="card-hdr-left"><i class="ti ti-bell"></i><span>Recent alerts</span></div>
@@ -417,343 +1252,579 @@
                 <div class="alert-row">
                   <div class="alert-dot-wrap"><span class="alert-dot alert-dot--blue"></span></div>
                   <div class="alert-body">
-                    <div class="alert-top"><p class="alert-tag">Appointment reminder</p><span class="alert-time">2h ago</span></div>
+                    <div class="alert-top">
+                      <p class="alert-tag">Appointment reminder</p><span class="alert-time">2h ago</span>
+                    </div>
                     <p class="alert-text">Dental checkup — Monday 9 AM</p>
                   </div>
                 </div>
                 <div class="alert-row">
                   <div class="alert-dot-wrap"><span class="alert-dot alert-dot--amber"></span></div>
                   <div class="alert-body">
-                    <div class="alert-top"><p class="alert-tag">Refill due</p><span class="alert-time">1d ago</span></div>
+                    <div class="alert-top">
+                      <p class="alert-tag">Refill due</p><span class="alert-time">1d ago</span>
+                    </div>
                     <p class="alert-text">Amoxicillin running low — 1 pill left</p>
                   </div>
                 </div>
                 <div class="alert-row">
                   <div class="alert-dot-wrap"><span class="alert-dot alert-dot--green"></span></div>
                   <div class="alert-body">
-                    <div class="alert-top"><p class="alert-tag">Health tip</p><span class="alert-time">2d ago</span></div>
+                    <div class="alert-top">
+                      <p class="alert-tag">Health tip</p><span class="alert-time">2d ago</span>
+                    </div>
                     <p class="alert-text">Stay hydrated — aim for 2L of water daily</p>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
+      <!-- EMERGENCY PAGE -->
+      <section class="page-section emergency-page" data-section="emergency" style="display:none;">
+        <div class="emergency-hero">
+          <div class="emergency-hero-content">
+            <div class="emergency-hero-tag"><i class="ti ti-ambulance"></i> Emergency Services</div>
+            <h1>🚨 Campus Emergency</h1>
+            <p>One tap connects you to campus emergency services. Share your location so help can reach you fast.</p>
+          </div>
+        </div>
+
+        <div class="emergency-grid">
+          <div class="sos-card" id="sosCardBtn">
+            <div class="sos-icon">📞</div>
+            <h3>Call Emergency</h3>
+            <p>Tap to call campus emergency<br><strong style="color:rgba(255,255,255,0.9)">+234 701 620 4090</strong>
+            </p>
+          </div>
+          <a href="https://wa.me/2347016204090?text=EMERGENCY%3A%20I%20need%20urgent%20campus%20medical%20assistance.%20Please%20respond%20immediately."
+            target="_blank" style="text-decoration:none;">
+            <div class="chat-card" style="height:100%;">
+              <div class="chat-icon"><i class="ti ti-brand-whatsapp" style="font-size:2rem;color:#25D366;"></i></div>
+              <h3>WhatsApp Chat</h3>
+              <p>Message emergency team on WhatsApp<br><strong>+234 701 620 4090</strong></p>
+            </div>
+          </a>
+        </div>
+
+        <!-- Location sharing -->
+        <div class="location-card">
+          <div class="location-card-hdr">
+            <i class="ti ti-map-pin"></i>
+            <span>Share Your Location</span>
+          </div>
+
+          <div class="location-status" id="locationStatus">
+            <div class="loc-dot" id="locDot"></div>
+            <div class="loc-status-text">
+              <div class="loc-status-title" id="locStatusTitle">Location not shared</div>
+              <div class="loc-status-sub" id="locStatusSub">Tap to share your GPS location with emergency services</div>
+            </div>
+            <button class="loc-share-btn" id="locShareBtn">Share</button>
+          </div>
+
+          <div class="loc-coords" id="locCoords"></div>
+
+          <p class="campus-spots-label">📍 Or select your campus location:</p>
+          <div class="campus-spots" id="campusSpots">
+            <div class="campus-spot" data-spot="Main Gate"><i class="ti ti-door-enter"></i>Main Gate</div>
+            <div class="campus-spot" data-spot="Academic Block A"><i class="ti ti-building"></i>Block A</div>
+            <div class="campus-spot" data-spot="Academic Block B"><i class="ti ti-building"></i>Block B</div>
+            <div class="campus-spot" data-spot="Academic Block C"><i class="ti ti-building"></i>Block C</div>
+            <div class="campus-spot" data-spot="Health Center"><i class="ti ti-heart-rate-monitor"></i>Health Center
+            </div>
+            <div class="campus-spot" data-spot="Student Cafeteria"><i class="ti ti-salad"></i>Cafeteria</div>
+            <div class="campus-spot" data-spot="Sports Complex"><i class="ti ti-ball-football"></i>Sports Complex</div>
+            <div class="campus-spot" data-spot="Library"><i class="ti ti-books"></i>Library</div>
+            <div class="campus-spot" data-spot="Chapel"><i class="ti ti-building-church"></i>Chapel</div>
+            <div class="campus-spot" data-spot="Student Hostels"><i class="ti ti-home"></i>Hostels</div>
+            <div class="campus-spot" data-spot="Admin Block"><i class="ti ti-id-badge"></i>Admin Block</div>
+            <div class="campus-spot" data-spot="Parking Lot"><i class="ti ti-car"></i>Parking Lot</div>
+          </div>
+
+          <div class="selected-spot-indicator" id="selectedSpotIndicator">
+            <i class="ti ti-map-pin-filled"></i>
+            <span id="selectedSpotText">No spot selected</span>
+          </div>
+        </div>
+
+        <!-- Emergency contacts -->
+        <p class="section-label"><i class="ti ti-phone"></i> Emergency contacts</p>
+        <div class="emergency-contacts">
+          <div class="ec-item">
+            <div class="ec-icon ec-icon--red"><i class="ti ti-ambulance"></i></div>
+            <div class="ec-info">
+              <div class="ec-name">Campus Medical Emergency</div>
+              <div class="ec-number">+234 701 620 4090</div>
+            </div>
+            <div class="ec-actions">
+              <a href="tel:+2347016204090" class="ec-btn ec-btn--call" title="Call"><i class="ti ti-phone"></i></a>
+              <a href="https://wa.me/2347016204090" target="_blank" class="ec-btn ec-btn--chat" title="WhatsApp"><i
+                  class="ti ti-brand-whatsapp"></i></a>
+            </div>
+          </div>
+          <div class="ec-item">
+            <div class="ec-icon ec-icon--blue"><i class="ti ti-shield"></i></div>
+            <div class="ec-info">
+              <div class="ec-name">Campus Security</div>
+              <div class="ec-number">+234 701 620 4090</div>
+            </div>
+            <div class="ec-actions">
+              <a href="tel:+2347016204090" class="ec-btn ec-btn--call" title="Call"><i class="ti ti-phone"></i></a>
+              <a href="https://wa.me/2347016204090" target="_blank" class="ec-btn ec-btn--chat" title="WhatsApp"><i
+                  class="ti ti-brand-whatsapp"></i></a>
+            </div>
+          </div>
+          <div class="ec-item">
+            <div class="ec-icon ec-icon--green"><i class="ti ti-heart-rate-monitor"></i></div>
+            <div class="ec-info">
+              <div class="ec-name">Health Center Hotline</div>
+              <div class="ec-number">+234 701 620 4090</div>
+            </div>
+            <div class="ec-actions">
+              <a href="tel:+2347016204090" class="ec-btn ec-btn--call" title="Call"><i class="ti ti-phone"></i></a>
+              <a href="https://wa.me/2347016204090" target="_blank" class="ec-btn ec-btn--chat" title="WhatsApp"><i
+                  class="ti ti-brand-whatsapp"></i></a>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- STUB PAGES -->
-      <section class="page-section" data-section="overview" style="display:none;"><div class="page-placeholder"><i class="ti ti-layout-dashboard"></i><p>Overview — coming soon</p></div></section>
-      <section class="page-section" data-section="records" style="display:none;"><div class="page-placeholder"><i class="ti ti-file-analytics"></i><p>My records — coming soon</p></div></section>
-      <section class="page-section" data-section="prescriptions" style="display:none;"><div class="page-placeholder"><i class="ti ti-pill"></i><p>Prescriptions — coming soon</p></div></section>
-      <section class="page-section" data-section="wellness" style="display:none;"><div class="page-placeholder"><i class="ti ti-heart"></i><p>Wellness hub — coming soon</p></div></section>
-      <section class="page-section" data-section="directory" style="display:none;"><div class="page-placeholder"><i class="ti ti-map-pin"></i><p>Directory — coming soon</p></div></section>
-      <section class="page-section" data-section="emergency" style="display:none;"><div class="page-placeholder"><i class="ti ti-ambulance"></i><p>Emergency — coming soon</p></div></section>
-      <section class="page-section" data-section="ai-doctor" style="display:none;"><div class="page-placeholder"><i class="ti ti-robot"></i><p>AI doctor — coming soon</p></div></section>
-      <section class="page-section" data-section="messages" style="display:none;"><div class="page-placeholder"><i class="ti ti-messages"></i><p>Messages — coming soon</p></div></section>
+      <section class="page-section" data-section="overview" style="display:none;">
+        <div class="page-placeholder"><i class="ti ti-layout-dashboard"></i>
+          <p>Overview — coming soon</p>
+        </div>
+      </section>
+      <section class="page-section" data-section="records" style="display:none;">
+        <div class="page-placeholder"><i class="ti ti-file-analytics"></i>
+          <p>My records — coming soon</p>
+        </div>
+      </section>
+      <section class="page-section" data-section="prescriptions" style="display:none;">
+        <div class="page-placeholder"><i class="ti ti-pill"></i>
+          <p>Prescriptions — coming soon</p>
+        </div>
+      </section>
+      <section class="page-section" data-section="wellness" style="display:none;">
+        <div class="page-placeholder"><i class="ti ti-heart"></i>
+          <p>Wellness hub — coming soon</p>
+        </div>
+      </section>
+      <section class="page-section" data-section="directory" style="display:none;">
+        <div class="page-placeholder"><i class="ti ti-map-pin"></i>
+          <p>Directory — coming soon</p>
+        </div>
+      </section>
+      <section class="page-section" data-section="ai-doctor" style="display:none;">
+        <div class="page-placeholder"><i class="ti ti-robot"></i>
+          <p>AI doctor — coming soon</p>
+        </div>
+      </section>
+      <section class="page-section" data-section="messages" style="display:none;">
+        <div class="page-placeholder"><i class="ti ti-messages"></i>
+          <p>Messages — coming soon</p>
+        </div>
+      </section>
     </div>
   </div>
 
-<script>
-/* ── PAGE NAV ── */
-const navItems = document.querySelectorAll('.nav-item[data-page]');
-const pageSections = document.querySelectorAll('.page-section');
-function goToPage(target) {
-  navItems.forEach(n => n.classList.toggle('active', n.dataset.page === target));
-  pageSections.forEach(p => { p.style.display = p.dataset.section === target ? 'block' : 'none'; });
-  closeSidebar();
-}
-navItems.forEach(item => item.addEventListener('click', e => { e.preventDefault(); goToPage(item.dataset.page); }));
-document.querySelectorAll('[data-page]').forEach(btn => {
-  if (!btn.classList.contains('nav-item')) {
-    btn.addEventListener('click', () => goToPage(btn.dataset.page));
-  }
-});
+  <script>
+    /* ── THEME SYNC: read from localStorage (set by login page) ── */
+    const html = document.documentElement;
+    const themeCheckbox = document.getElementById('themeCheckbox');
+    const themeIcon = document.getElementById('settingsThemeIcon');
+    const themeLabel = document.getElementById('settingsThemeLabel');
 
-/* ── MOBILE SIDEBAR ── */
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('sidebarOverlay');
-const hamburger = document.getElementById('hamburger');
-const sidebarClose = document.getElementById('sidebarClose');
-function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('show'); }
-function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
-hamburger.addEventListener('click', openSidebar);
-sidebarClose.addEventListener('click', closeSidebar);
-overlay.addEventListener('click', closeSidebar);
+    function applyTheme(dark) {
+      html.setAttribute('data-theme', dark ? 'dark' : 'light');
+      themeCheckbox.checked = dark;
+      themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
+      themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
+      /* Save with both keys so login page and dashboard stay in sync */
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+      localStorage.setItem('cc_theme', dark ? 'dark' : 'light');
+    }
 
-/* ── DROPDOWNS ── */
-function setupDropdown(tid, did) {
-  const t = document.getElementById(tid), d = document.getElementById(did);
-  t.addEventListener('click', e => {
-    e.stopPropagation();
-    const open = d.classList.contains('open');
-    document.querySelectorAll('.dropdown-menu').forEach(x => x.classList.remove('open'));
-    if (!open) d.classList.add('open');
-  });
-}
-setupDropdown('settingsBtn','settingsDropdown');
-setupDropdown('profileBtn','profileDropdown');
-document.addEventListener('click', () => document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('open')));
+    /* Read from either key — prefer cc_theme (login uses that) */
+    const savedTheme = localStorage.getItem('cc_theme') || localStorage.getItem('theme');
+    applyTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+    themeCheckbox.addEventListener('change', () => applyTheme(themeCheckbox.checked));
 
-/* ── DARK MODE ── */
-const html = document.documentElement;
-const themeCheckbox = document.getElementById('themeCheckbox');
-const themeIcon = document.getElementById('settingsThemeIcon');
-const themeLabel = document.getElementById('settingsThemeLabel');
-function applyTheme(dark) {
-  html.setAttribute('data-theme', dark ? 'dark' : 'light');
-  themeCheckbox.checked = dark;
-  themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
-  themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
-}
-const savedTheme = localStorage.getItem('theme');
-applyTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
-themeCheckbox.addEventListener('change', () => applyTheme(themeCheckbox.checked));
+    /* ── PAGE NAV ── */
+    const navItems = document.querySelectorAll('.nav-item[data-page]');
+    const pageSections = document.querySelectorAll('.page-section');
+    function goToPage(target) {
+      navItems.forEach(n => n.classList.toggle('active', n.dataset.page === target));
+      pageSections.forEach(p => { p.style.display = p.dataset.section === target ? 'block' : 'none'; });
+      closeSidebar();
+    }
+    navItems.forEach(item => item.addEventListener('click', e => { e.preventDefault(); goToPage(item.dataset.page); }));
+    document.querySelectorAll('[data-page]').forEach(btn => {
+      if (!btn.classList.contains('nav-item')) {
+        btn.addEventListener('click', () => goToPage(btn.dataset.page));
+      }
+    });
 
-/* ── STREAK SYSTEM ── */
-const QUESTIONS = [
-  { id:'water',    emoji:'💧', bg:'#E6F1FB', main:'Did you drink enough water today?',         sub:'Aim for at least 1.5L',               pts:10        },
-  { id:'sleep',    emoji:'😴', bg:'#EEEDFE', main:'Did you get 7+ hours of sleep?',            sub:'Rest is part of health too',           pts:10        },
-  { id:'meal',     emoji:'🥗', bg:'#EAF3DE', main:'Did you eat at least two proper meals?',    sub:"Breakfast counts — don't skip it",     pts:10        },
-  { id:'exercise', emoji:'🏃', bg:'#FAECE7', main:'Did you move your body today?',             sub:'Even a 10-min walk counts',            pts:10        },
-  { id:'meds',     emoji:'💊', bg:'#FAEEDA', main:'Did you take your prescribed medications?', sub:'Tap N/A if you have none',             pts:10, na:true },
-  { id:'mental',   emoji:'🧘', bg:'#FBEAF0', main:"How's your mental health today?",          sub:'No stress is a health win',            pts:10        },
-];
-const MILESTONES = [
-  { emoji:'⭐', name:'First step',   req:'3 days',  days:3  },
-  { emoji:'🏅', name:'Week warrior', req:'7 days',  days:7  },
-  { emoji:'💪', name:'Iron health',  req:'14 days', days:14 },
-  { emoji:'👑', name:'Legend',       req:'30 days', days:30 },
-];
-function getLevel(xp) {
-  if (xp < 100) return { name:'Health Starter',  bg:'#E6F1FB', color:'#0C447C', chip:'#185FA5', next:100,  prev:0   };
-  if (xp < 200) return { name:'Wellness Rookie', bg:'#EAF3DE', color:'#27500A', chip:'#3B6D11', next:200,  prev:100 };
-  if (xp < 400) return { name:'Health Guardian', bg:'#FAEEDA', color:'#633806', chip:'#854F0B', next:400,  prev:200 };
-  if (xp < 700) return { name:'Vitality Pro',    bg:'#EEEDFE', color:'#3C3489', chip:'#534AB7', next:700,  prev:400 };
-  return               { name:'Campus Legend',   bg:'#FCEBEB', color:'#791F1F', chip:'#A32D2D', next:null, prev:700 };
-}
+    /* ── MOBILE SIDEBAR ── */
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const hamburger = document.getElementById('hamburger');
+    const sidebarClose = document.getElementById('sidebarClose');
+    function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+    function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+    hamburger.addEventListener('click', openSidebar);
+    sidebarClose.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
 
-let streak = JSON.parse(localStorage.getItem('cc_streak') || 'null') || {
-  count:0, xp:0, answers:{}, submitted:false,
-  week:[false,false,false,false,false,false,false], lastDate:null
-};
-(function checkDay() {
-  const today = new Date().toDateString();
-  if (streak.lastDate !== today) {
-    streak.answers = {}; streak.submitted = false; streak.lastDate = today;
-    localStorage.setItem('cc_streak', JSON.stringify(streak));
-  }
-})();
-function saveStreak() { localStorage.setItem('cc_streak', JSON.stringify(streak)); }
+    /* ── DROPDOWNS ── */
+    function setupDropdown(tid, did) {
+      const t = document.getElementById(tid), d = document.getElementById(did);
+      t.addEventListener('click', e => {
+        e.stopPropagation();
+        const open = d.classList.contains('open');
+        document.querySelectorAll('.dropdown-menu, .notif-dropdown').forEach(x => x.classList.remove('open'));
+        if (!open) d.classList.add('open');
+      });
+    }
+    setupDropdown('settingsBtn', 'settingsDropdown');
+    setupDropdown('profileBtn', 'profileDropdown');
 
-/* ── MODAL open/close ── */
-const modalOverlay = document.getElementById('streakModalOverlay');
-const modalEl = document.getElementById('streakModal');
+    /* Notification dropdown */
+    const notifBtn = document.getElementById('notifBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+    notifBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = notifDropdown.classList.contains('open');
+      document.querySelectorAll('.dropdown-menu, .notif-dropdown').forEach(x => x.classList.remove('open'));
+      if (!open) notifDropdown.classList.add('open');
+    });
 
-function openStreakModal() {
-  renderModal();
-  modalOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeStreakModal() {
-  modalOverlay.classList.remove('open');
-  document.body.style.overflow = '';
-  renderTeaser();
-}
-document.getElementById('streakModalClose').addEventListener('click', closeStreakModal);
-modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeStreakModal(); });
-document.getElementById('openStreakModal').addEventListener('click', openStreakModal);
-document.getElementById('openStreakModal2').addEventListener('click', openStreakModal);
+    /* Mark all read */
+    document.getElementById('markAllRead').addEventListener('click', e => {
+      e.stopPropagation();
+      document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+      const badge = document.getElementById('notifBadge');
+      badge.style.display = 'none';
+    });
 
-/* ── MODAL: render header ── */
-function renderModalHeader() {
-  const lv = getLevel(streak.xp);
-  document.getElementById('smStreakNum').textContent = streak.count;
-  document.getElementById('smXP').textContent = streak.xp + ' XP';
-  const chip = document.getElementById('smLevelChip');
-  chip.style.background = lv.bg; chip.style.color = lv.color;
-  document.getElementById('smLevelName').textContent = lv.name;
-  if (lv.next) {
-    const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
-    document.getElementById('smBarFill').style.width = pct + '%';
-    document.getElementById('smBarGlow').style.left = pct + '%';
-    document.getElementById('smLevelNext').textContent = (lv.next - streak.xp) + ' XP to next level';
-  } else {
-    document.getElementById('smBarFill').style.width = '100%';
-    document.getElementById('smBarGlow').style.left = '100%';
-    document.getElementById('smLevelNext').textContent = 'Max level reached! 🎉';
-  }
-  const sub = document.getElementById('smStreakSub');
-  sub.textContent = streak.count >= 7 ? "You're on fire! 🔥" : streak.count >= 3 ? 'Keep it going!' : 'Start your streak today!';
-}
+    /* Click individual notif to mark read */
+    document.querySelectorAll('.notif-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.remove('unread');
+        const remaining = document.querySelectorAll('.notif-item.unread').length;
+        const badge = document.getElementById('notifBadge');
+        if (remaining === 0) { badge.style.display = 'none'; }
+        else { badge.textContent = remaining; }
+      });
+    });
 
-/* ── MODAL: render week ── */
-function renderModalWeek() {
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const wrap = document.getElementById('smWeek');
-  wrap.innerHTML = '';
-  days.forEach((d,i) => {
-    const done = streak.week[i];
-    const el = document.createElement('div');
-    el.className = 'sm-day';
-    el.innerHTML = `<div class="sm-day-circle${done?' sm-day-done':''}">${done?'🔥':'·'}</div><span class="sm-day-name">${d}</span>`;
-    wrap.appendChild(el);
-  });
-}
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown-menu, .notif-dropdown').forEach(d => d.classList.remove('open'));
+    });
 
-/* ── MODAL: render questions ── */
-function renderModalQuestions() {
-  const wrap = document.getElementById('smQuestions');
-  wrap.innerHTML = '';
-  QUESTIONS.forEach(q => {
-    const ans = streak.answers[q.id];
-    const row = document.createElement('div');
-    row.className = `sm-q${ans==='yes'?' sm-q--yes':ans==='no'?' sm-q--no':''}`;
-    row.innerHTML = `
-      <div class="sm-q-icon" style="background:${q.bg}">${q.emoji}</div>
-      <div class="sm-q-text">
-        <p class="sm-q-main">${q.main}</p>
-        <p class="sm-q-sub">${q.sub}</p>
-      </div>
-      <div class="sm-q-btns">
-        ${q.na?`<button class="sm-cq-btn${ans==='na'?' sm-cq--yes':''}" data-id="${q.id}" data-val="na">N/A</button>`:''}
-        <button class="sm-cq-btn${ans==='no'?' sm-cq--no':''}" data-id="${q.id}" data-val="no">No</button>
-        <button class="sm-cq-btn${ans==='yes'?' sm-cq--yes':''}" data-id="${q.id}" data-val="yes">Yes</button>
-      </div>`;
-    wrap.appendChild(row);
-  });
-  wrap.querySelectorAll('.sm-cq-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    /* ── SOS MODAL ── */
+    const sosOverlay = document.getElementById('sosModalOverlay');
+    let sosTimer = null;
+    let sosCount = 5;
+
+    document.getElementById('sosCardBtn').addEventListener('click', () => {
+      sosCount = 5;
+      document.getElementById('sosCountdownNum').textContent = sosCount;
+      sosOverlay.classList.add('open');
+      sosTimer = setInterval(() => {
+        sosCount--;
+        document.getElementById('sosCountdownNum').textContent = sosCount;
+        if (sosCount <= 0) {
+          clearInterval(sosTimer);
+          window.location.href = 'tel:+2347016204090';
+          sosOverlay.classList.remove('open');
+        }
+      }, 1000);
+    });
+
+    document.getElementById('sosCancelBtn').addEventListener('click', () => {
+      clearInterval(sosTimer);
+      sosOverlay.classList.remove('open');
+    });
+
+    /* ── LOCATION SHARING ── */
+    let locationShared = false;
+    let selectedSpot = null;
+
+    document.getElementById('locShareBtn').addEventListener('click', () => {
+      if (locationShared) {
+        /* Stop sharing */
+        locationShared = false;
+        const status = document.getElementById('locationStatus');
+        status.classList.remove('active');
+        document.getElementById('locDot').style.background = '#A32D2D';
+        document.getElementById('locStatusTitle').textContent = 'Location not shared';
+        document.getElementById('locStatusSub').textContent = 'Tap to share your GPS location with emergency services';
+        document.getElementById('locShareBtn').textContent = 'Share';
+        document.getElementById('locCoords').classList.remove('show');
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        document.getElementById('locStatusSub').textContent = 'Geolocation not supported by your browser';
+        return;
+      }
+
+      document.getElementById('locStatusTitle').textContent = 'Getting location…';
+      document.getElementById('locStatusSub').textContent = 'Please allow location access';
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          locationShared = true;
+          const lat = pos.coords.latitude.toFixed(6);
+          const lng = pos.coords.longitude.toFixed(6);
+          const status = document.getElementById('locationStatus');
+          status.classList.add('active');
+          document.getElementById('locStatusTitle').textContent = 'Location shared ✓';
+          document.getElementById('locStatusSub').textContent = 'Emergency services can now locate you';
+          document.getElementById('locShareBtn').textContent = 'Stop';
+          const coordEl = document.getElementById('locCoords');
+          coordEl.textContent = `📍 Lat: ${lat}, Lng: ${lng} | Google Maps: maps.google.com/?q=${lat},${lng}`;
+          coordEl.classList.add('show');
+        },
+        (err) => {
+          document.getElementById('locStatusTitle').textContent = 'Location access denied';
+          document.getElementById('locStatusSub').textContent = 'Please select a campus spot below instead';
+        }
+      );
+    });
+
+    /* Campus spot selection */
+    document.querySelectorAll('.campus-spot').forEach(spot => {
+      spot.addEventListener('click', () => {
+        document.querySelectorAll('.campus-spot').forEach(s => s.classList.remove('selected'));
+        spot.classList.add('selected');
+        selectedSpot = spot.dataset.spot;
+        const indicator = document.getElementById('selectedSpotIndicator');
+        document.getElementById('selectedSpotText').textContent = 'Patient is at: ' + selectedSpot;
+        indicator.classList.add('show');
+      });
+    });
+
+    /* ── STREAK SYSTEM ── */
+    const QUESTIONS = [
+      { id: 'water', emoji: '💧', bg: '#E6F1FB', main: 'Did you drink enough water today?', sub: 'Aim for at least 1.5L', pts: 10 },
+      { id: 'sleep', emoji: '😴', bg: '#EEEDFE', main: 'Did you get 7+ hours of sleep?', sub: 'Rest is part of health too', pts: 10 },
+      { id: 'meal', emoji: '🥗', bg: '#EAF3DE', main: 'Did you eat at least two proper meals?', sub: "Breakfast counts — don't skip it", pts: 10 },
+      { id: 'exercise', emoji: '🏃', bg: '#FAECE7', main: 'Did you move your body today?', sub: 'Even a 10-min walk counts', pts: 10 },
+      { id: 'meds', emoji: '💊', bg: '#FAEEDA', main: 'Did you take your prescribed medications?', sub: 'Tap N/A if you have none', pts: 10, na: true },
+      { id: 'mental', emoji: '🧘', bg: '#FBEAF0', main: "How's your mental health today?", sub: 'No stress is a health win', pts: 10 },
+    ];
+    const MILESTONES = [
+      { emoji: '⭐', name: 'First step', req: '3 days', days: 3 },
+      { emoji: '🏅', name: 'Week warrior', req: '7 days', days: 7 },
+      { emoji: '💪', name: 'Iron health', req: '14 days', days: 14 },
+      { emoji: '👑', name: 'Legend', req: '30 days', days: 30 },
+    ];
+    function getLevel(xp) {
+      if (xp < 100) return { name: 'Health Starter', bg: '#E6F1FB', color: '#0C447C', chip: '#185FA5', next: 100, prev: 0 };
+      if (xp < 200) return { name: 'Wellness Rookie', bg: '#EAF3DE', color: '#27500A', chip: '#3B6D11', next: 200, prev: 100 };
+      if (xp < 400) return { name: 'Health Guardian', bg: '#FAEEDA', color: '#633806', chip: '#854F0B', next: 400, prev: 200 };
+      if (xp < 700) return { name: 'Vitality Pro', bg: '#EEEDFE', color: '#3C3489', chip: '#534AB7', next: 700, prev: 400 };
+      return { name: 'Campus Legend', bg: '#FCEBEB', color: '#791F1F', chip: '#A32D2D', next: null, prev: 700 };
+    }
+
+    let streak = JSON.parse(localStorage.getItem('cc_streak') || 'null') || {
+      count: 0, xp: 0, answers: {}, submitted: false,
+      week: [false, false, false, false, false, false, false], lastDate: null
+    };
+    (function checkDay() {
+      const today = new Date().toDateString();
+      if (streak.lastDate !== today) {
+        streak.answers = {}; streak.submitted = false; streak.lastDate = today;
+        localStorage.setItem('cc_streak', JSON.stringify(streak));
+      }
+    })();
+    function saveStreak() { localStorage.setItem('cc_streak', JSON.stringify(streak)); }
+
+    const modalOverlay = document.getElementById('streakModalOverlay');
+    function openStreakModal() { renderModal(); modalOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeStreakModal() { modalOverlay.classList.remove('open'); document.body.style.overflow = ''; renderTeaser(); }
+    document.getElementById('streakModalClose').addEventListener('click', closeStreakModal);
+    modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeStreakModal(); });
+    document.getElementById('openStreakModal').addEventListener('click', openStreakModal);
+    document.getElementById('openStreakModal2').addEventListener('click', openStreakModal);
+
+    function renderModalHeader() {
+      const lv = getLevel(streak.xp);
+      document.getElementById('smStreakNum').textContent = streak.count;
+      document.getElementById('smXP').textContent = streak.xp + ' XP';
+      const chip = document.getElementById('smLevelChip');
+      chip.style.background = lv.bg; chip.style.color = lv.color;
+      document.getElementById('smLevelName').textContent = lv.name;
+      if (lv.next) {
+        const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
+        document.getElementById('smBarFill').style.width = pct + '%';
+        document.getElementById('smBarGlow').style.left = pct + '%';
+        document.getElementById('smLevelNext').textContent = (lv.next - streak.xp) + ' XP to next level';
+      } else {
+        document.getElementById('smBarFill').style.width = '100%';
+        document.getElementById('smBarGlow').style.left = '100%';
+        document.getElementById('smLevelNext').textContent = 'Max level reached! 🎉';
+      }
+      document.getElementById('smStreakSub').textContent = streak.count >= 7 ? "You're on fire! 🔥" : streak.count >= 3 ? 'Keep it going!' : 'Start your streak today!';
+    }
+
+    function renderModalWeek() {
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const wrap = document.getElementById('smWeek');
+      wrap.innerHTML = '';
+      days.forEach((d, i) => {
+        const done = streak.week[i];
+        const el = document.createElement('div');
+        el.className = 'sm-day';
+        el.innerHTML = `<div class="sm-day-circle${done ? ' sm-day-done' : ''}">${done ? '🔥' : '·'}</div><span class="sm-day-name">${d}</span>`;
+        wrap.appendChild(el);
+      });
+    }
+
+    function renderModalQuestions() {
+      const wrap = document.getElementById('smQuestions');
+      wrap.innerHTML = '';
+      QUESTIONS.forEach(q => {
+        const ans = streak.answers[q.id];
+        const row = document.createElement('div');
+        row.className = `sm-q${ans === 'yes' ? ' sm-q--yes' : ans === 'no' ? ' sm-q--no' : ''}`;
+        row.innerHTML = `
+          <div class="sm-q-icon" style="background:${q.bg}">${q.emoji}</div>
+          <div class="sm-q-text">
+            <p class="sm-q-main">${q.main}</p>
+            <p class="sm-q-sub">${q.sub}</p>
+          </div>
+          <div class="sm-q-btns">
+            ${q.na ? `<button class="sm-cq-btn${ans === 'na' ? ' sm-cq--yes' : ''}" data-id="${q.id}" data-val="na">N/A</button>` : ''}
+            <button class="sm-cq-btn${ans === 'no' ? ' sm-cq--no' : ''}" data-id="${q.id}" data-val="no">No</button>
+            <button class="sm-cq-btn${ans === 'yes' ? ' sm-cq--yes' : ''}" data-id="${q.id}" data-val="yes">Yes</button>
+          </div>`;
+        wrap.appendChild(row);
+      });
+      wrap.querySelectorAll('.sm-cq-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (streak.submitted) return;
+          streak.answers[btn.dataset.id] = btn.dataset.val;
+          saveStreak(); renderModalQuestions(); updateModalSubmit();
+        });
+      });
+    }
+
+    function updateModalSubmit() {
+      const answered = QUESTIONS.filter(q => streak.answers[q.id]).length;
+      const remaining = QUESTIONS.length - answered;
+      const btn = document.getElementById('smSubmit');
+      const txt = document.getElementById('smSubmitText');
+      const status = document.getElementById('smDividerStatus');
+      if (streak.submitted) {
+        txt.textContent = '✓ Check-in logged!'; btn.disabled = true; btn.classList.add('sm-submit--done');
+        status.textContent = 'See you tomorrow!';
+      } else if (remaining === 0) {
+        btn.disabled = false; btn.classList.add('sm-submit--ready'); txt.textContent = "Log today's streak →";
+        status.textContent = 'All done — ready to log!';
+      } else {
+        btn.disabled = true; btn.classList.remove('sm-submit--ready');
+        txt.textContent = `${remaining} question${remaining > 1 ? 's' : ''} remaining`;
+        status.textContent = `${answered} of ${QUESTIONS.length} answered`;
+      }
+    }
+
+    function renderModalMilestones() {
+      const wrap = document.getElementById('smMilestonesGrid');
+      wrap.innerHTML = '';
+      MILESTONES.forEach(m => {
+        const unlocked = streak.count >= m.days;
+        const el = document.createElement('div');
+        el.className = `sm-milestone${unlocked ? ' sm-milestone--unlocked' : ''}`;
+        el.innerHTML = `<span class="sm-milestone-emoji">${m.emoji}</span><span class="sm-milestone-name">${m.name}</span><span class="sm-milestone-req">${m.req}</span>`;
+        wrap.appendChild(el);
+      });
+    }
+
+    function renderModal() {
+      renderModalHeader(); renderModalWeek(); renderModalQuestions(); updateModalSubmit(); renderModalMilestones();
+    }
+
+    document.getElementById('smSubmit').addEventListener('click', () => {
       if (streak.submitted) return;
-      streak.answers[btn.dataset.id] = btn.dataset.val;
-      saveStreak(); renderModalQuestions(); updateModalSubmit();
+      const yesCount = Object.values(streak.answers).filter(a => a === 'yes' || a === 'na').length;
+      const earned = yesCount * 10;
+      const majority = yesCount >= Math.ceil(QUESTIONS.length / 2);
+      if (majority) {
+        streak.count += 1; streak.xp += earned;
+        const dayIdx = (new Date().getDay() + 6) % 7;
+        streak.week[dayIdx] = true;
+        showModalToast(true, earned, yesCount);
+        const flameEl = document.getElementById('smFlameEmoji');
+        const ringEl = document.getElementById('smFlameRing');
+        flameEl.classList.add('sm-flame-pulse');
+        ringEl.classList.add('sm-ring-burst');
+        setTimeout(() => { flameEl.classList.remove('sm-flame-pulse'); ringEl.classList.remove('sm-ring-burst'); }, 700);
+      } else {
+        streak.count = 0;
+        showModalToast(false, earned, yesCount);
+      }
+      streak.submitted = true; saveStreak();
+      renderModal(); renderTeaser();
     });
-  });
-}
 
-function updateModalSubmit() {
-  const answered = QUESTIONS.filter(q => streak.answers[q.id]).length;
-  const remaining = QUESTIONS.length - answered;
-  const btn = document.getElementById('smSubmit');
-  const txt = document.getElementById('smSubmitText');
-  const status = document.getElementById('smDividerStatus');
-  if (streak.submitted) {
-    txt.textContent = '✓ Check-in logged!'; btn.disabled = true; btn.classList.add('sm-submit--done');
-    status.textContent = 'See you tomorrow!';
-  } else if (remaining === 0) {
-    btn.disabled = false; btn.classList.add('sm-submit--ready'); txt.textContent = "Log today's streak →";
-    status.textContent = 'All done — ready to log!';
-  } else {
-    btn.disabled = true; btn.classList.remove('sm-submit--ready');
-    txt.textContent = `${remaining} question${remaining>1?'s':''} remaining`;
-    status.textContent = `${answered} of ${QUESTIONS.length} answered`;
-  }
-}
+    function showModalToast(won, pts, yes) {
+      const t = document.getElementById('smToast');
+      t.className = `sm-toast sm-toast--show ${won ? 'sm-toast--win' : 'sm-toast--loss'}`;
+      t.textContent = won
+        ? `🔥 Streak extended! +${pts} XP · ${yes}/${QUESTIONS.length} habits logged`
+        : `Streak reset. Only ${yes}/${QUESTIONS.length} habits logged. Tomorrow is fresh!`;
+    }
 
-function renderModalMilestones() {
-  const wrap = document.getElementById('smMilestonesGrid');
-  wrap.innerHTML = '';
-  MILESTONES.forEach(m => {
-    const unlocked = streak.count >= m.days;
-    const el = document.createElement('div');
-    el.className = `sm-milestone${unlocked?' sm-milestone--unlocked':''}`;
-    el.innerHTML = `<span class="sm-milestone-emoji">${m.emoji}</span><span class="sm-milestone-name">${m.name}</span><span class="sm-milestone-req">${m.req}</span>`;
-    wrap.appendChild(el);
-  });
-}
-
-function renderModal() {
-  renderModalHeader();
-  renderModalWeek();
-  renderModalQuestions();
-  updateModalSubmit();
-  renderModalMilestones();
-}
-
-/* ── Modal submit ── */
-document.getElementById('smSubmit').addEventListener('click', () => {
-  if (streak.submitted) return;
-  const yesCount = Object.values(streak.answers).filter(a => a==='yes'||a==='na').length;
-  const earned = yesCount * 10;
-  const majority = yesCount >= Math.ceil(QUESTIONS.length / 2);
-  if (majority) {
-    streak.count += 1; streak.xp += earned;
-    const dayIdx = (new Date().getDay() + 6) % 7;
-    streak.week[dayIdx] = true;
-    showModalToast(true, earned, yesCount);
-    /* pulse the flame */
-    const flameEl = document.getElementById('smFlameEmoji');
-    const ringEl = document.getElementById('smFlameRing');
-    flameEl.classList.add('sm-flame-pulse');
-    ringEl.classList.add('sm-ring-burst');
-    setTimeout(() => { flameEl.classList.remove('sm-flame-pulse'); ringEl.classList.remove('sm-ring-burst'); }, 700);
-  } else {
-    streak.count = 0;
-    showModalToast(false, earned, yesCount);
-  }
-  streak.submitted = true; saveStreak();
-  renderModal(); renderTeaser();
-});
-
-function showModalToast(won, pts, yes) {
-  const t = document.getElementById('smToast');
-  t.className = `sm-toast sm-toast--show ${won?'sm-toast--win':'sm-toast--loss'}`;
-  t.textContent = won
-    ? `🔥 Streak extended! +${pts} XP · ${yes}/${QUESTIONS.length} habits logged`
-    : `Streak reset. Only ${yes}/${QUESTIONS.length} habits logged. Tomorrow is fresh!`;
-}
-
-/* ── TEASER card render ── */
-function renderTeaser() {
-  const lv = getLevel(streak.xp);
-  document.getElementById('stNum').textContent = streak.count;
-  document.getElementById('stXp').textContent = streak.xp + ' XP';
-  const chip = document.getElementById('stLevelChip');
-  chip.style.background = lv.bg; chip.style.color = lv.color;
-  document.getElementById('stLevelName').textContent = lv.name;
-  if (lv.next) {
-    const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
-    document.getElementById('stBarFill').style.width = pct + '%';
-    document.getElementById('stLevelNext').textContent = (lv.next - streak.xp) + ' XP to level up';
-  } else {
-    document.getElementById('stBarFill').style.width = '100%';
-    document.getElementById('stLevelNext').textContent = 'Max level!';
-  }
-  document.getElementById('stSub').textContent = streak.count >= 7 ? "On fire! 🔥" : streak.count >= 3 ? 'Keep it up!' : 'Start today!';
-  document.getElementById('stCtaText').textContent = streak.submitted ? '✓ Logged today' : "Log today's check-in";
-
-  /* week */
-  const days = ['M','T','W','T','F','S','S'];
-  const wrap = document.getElementById('stWeek');
-  wrap.innerHTML = '';
-  days.forEach((d,i) => {
-    const done = streak.week[i];
-    const el = document.createElement('div');
-    el.className = 'st-day';
-    el.innerHTML = `<div class="st-day-circle${done?' st-day-done':''}">${done?'🔥':d}</div>`;
-    wrap.appendChild(el);
-  });
-
-  /* quick actions hint */
-  const qaHint = document.getElementById('qaStreakHint');
-  if (qaHint) qaHint.textContent = streak.submitted ? streak.count + ' day streak' : 'Log check-in';
-
-  /* mini milestones in teaser */
-  const row = document.getElementById('stMilestonesRow');
-  if (row) {
-    row.innerHTML = '';
-    MILESTONES.forEach(m => {
-      const unlocked = streak.count >= m.days;
-      const el = document.createElement('div');
-      el.className = `st-milestone${unlocked?' st-milestone--unlocked':''}`;
-      el.title = m.name + ' — ' + m.req;
-      el.textContent = m.emoji;
-      row.appendChild(el);
-    });
-  }
-}
-renderTeaser();
-</script>
+    function renderTeaser() {
+      const lv = getLevel(streak.xp);
+      document.getElementById('stNum').textContent = streak.count;
+      document.getElementById('stXp').textContent = streak.xp + ' XP';
+      const chip = document.getElementById('stLevelChip');
+      chip.style.background = lv.bg; chip.style.color = lv.color;
+      document.getElementById('stLevelName').textContent = lv.name;
+      if (lv.next) {
+        const pct = Math.min(100, Math.round(((streak.xp - lv.prev) / (lv.next - lv.prev)) * 100));
+        document.getElementById('stBarFill').style.width = pct + '%';
+        document.getElementById('stLevelNext').textContent = (lv.next - streak.xp) + ' XP to level up';
+      } else {
+        document.getElementById('stBarFill').style.width = '100%';
+        document.getElementById('stLevelNext').textContent = 'Max level!';
+      }
+      document.getElementById('stSub').textContent = streak.count >= 7 ? "On fire! 🔥" : streak.count >= 3 ? 'Keep it up!' : 'Start today!';
+      document.getElementById('stCtaText').textContent = streak.submitted ? '✓ Logged today' : "Log today's check-in";
+      const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+      const wrap = document.getElementById('stWeek');
+      wrap.innerHTML = '';
+      days.forEach((d, i) => {
+        const done = streak.week[i];
+        const el = document.createElement('div');
+        el.className = 'st-day';
+        el.innerHTML = `<div class="st-day-circle${done ? ' st-day-done' : ''}">${done ? '🔥' : d}</div>`;
+        wrap.appendChild(el);
+      });
+      const qaHint = document.getElementById('qaStreakHint');
+      if (qaHint) qaHint.textContent = streak.submitted ? streak.count + ' day streak' : 'Log check-in';
+      const row = document.getElementById('stMilestonesRow');
+      if (row) {
+        row.innerHTML = '';
+        MILESTONES.forEach(m => {
+          const unlocked = streak.count >= m.days;
+          const el = document.createElement('div');
+          el.className = `st-milestone${unlocked ? ' st-milestone--unlocked' : ''}`;
+          el.title = m.name + ' — ' + m.req;
+          el.textContent = m.emoji;
+          row.appendChild(el);
+        });
+      }
+    }
+    renderTeaser();
+  </script>
 </body>
+
 </html>

@@ -20,8 +20,13 @@
     /* Welcome message */
     var welcome = document.querySelector('.welcome-msg');
     if (welcome) {
-      welcome.textContent = 'Welcome ' + (user.firstName || user.fullName) + '! We\'re glad you\'re back 👋';
+      welcome.textContent = 'Hey, ' + (user.firstName || user.fullName) + '! Glad to have you back 👋';
     }
+
+    /* Hero first name — replace any .hero-firstname span */
+    document.querySelectorAll('.hero-firstname').forEach(function (el) {
+      el.textContent = user.firstName || user.fullName || 'Samuel';
+    });
 
     /* Sidebar — initials + name */
     var sidebarAvatar = document.querySelector('.sidebar-profile-avatar');
@@ -62,7 +67,6 @@
         topbarImg.src = user.avatarUrl;
         topbarImg.alt = user.fullName;
       } else {
-        /* No photo — show initials circle */
         var circle = document.createElement('div');
         circle.style.cssText = 'width:100%;height:100%;border-radius:50%;background:var(--color-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:600;cursor:pointer;border:1px solid var(--color-border-glass);box-shadow:var(--shadow-avatar);user-select:none;letter-spacing:0.03em;';
         circle.textContent = user.initials || '??';
@@ -77,7 +81,6 @@
         item.addEventListener('click', function (e) {
           e.stopPropagation();
           localStorage.removeItem('cc_user');
-          /* Revoke Google session too so it doesn't auto-sign back in */
           if (window.google && window.google.accounts && window.google.accounts.id) {
             google.accounts.id.disableAutoSelect();
           }
