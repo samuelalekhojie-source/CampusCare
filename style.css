@@ -473,7 +473,7 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-dropdown);
   padding: 0.5rem;
-  z-index: 200;
+  z-index: 99999;
   opacity: 0;
   pointer-events: none;
   transform: translateY(-6px) scale(0.97);
