@@ -1,536 +1,1019 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CampusCare — Sign in</title>
-  <link href="https://fonts.googleapis.com/css?family=Mona+Sans:300,400,500,600,700" rel="stylesheet" />
+  <title>CampusCare — Sign in / Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
-
   <style>
     :root {
-      --color-primary: #3aa0ed;
-      --color-primary-hover: #2a8fd8;
-      --color-primary-light: #dbe9f9;
-      --color-bg-page: linear-gradient(135deg, #c9d2f1 0%, #dbe9f9 50%, #f0f4f9 100%);
-      --color-bg-card: rgba(251, 253, 255, 0.82);
-      --color-border-glass: rgba(255, 255, 255, 0.7);
-      --color-text-primary: #1d2328;
-      --color-text-muted: rgba(29, 35, 40, 0.6);
-      --color-divider: rgba(0, 0, 0, 0.08);
-      --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
-      --blur: blur(20px);
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      --radius-full: 999px;
-      --font: "Mona Sans", sans-serif;
+      --primary: #1a7fd4;
+      --primary-hover: #1568b3;
+      --primary-light: #dceeff;
+      --bg-page: #eef3f8;
+      --bg-card: #ffffff;
+      --bg-input: #f5f8fb;
+      --border: #d0dce8;
+      --border-focus: #1a7fd4;
+      --text: #111827;
+      --text-muted: #6b7a8d;
+      --error: #c0392b;
+      --error-bg: #fdf0ee;
+      --error-border: #e8b4ae;
+      --success: #1a7fd4;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 8px 30px rgba(0,0,0,0.09), 0 2px 8px rgba(0,0,0,0.04);
+      --font: 'DM Sans', sans-serif;
+      --font-display: 'DM Serif Display', serif;
     }
-
     [data-theme="dark"] {
-      --color-primary: #4fb3ff;
-      --color-primary-hover: #68bfff;
-      --color-primary-light: #1a2a3a;
-      --color-bg-page: linear-gradient(135deg, #131926 0%, #1a1f2e 50%, #1e2330 100%);
-      --color-bg-card: rgba(25, 30, 44, 0.85);
-      --color-border-glass: rgba(255, 255, 255, 0.08);
-      --color-text-primary: #e8edf2;
-      --color-text-muted: rgba(232, 237, 242, 0.55);
-      --color-divider: rgba(255, 255, 255, 0.07);
+      --bg-page: #0e131a;
+      --bg-card: #161d27;
+      --bg-input: #1e2738;
+      --border: #2c3a4e;
+      --border-focus: #4fb3ff;
+      --text: #e2eaf5;
+      --text-muted: #7a90ab;
+      --primary: #4fb3ff;
+      --primary-hover: #68bdff;
+      --primary-light: #0e2035;
+      --error-bg: #2a1215;
+      --error-border: #5c2020;
     }
-
-    *,
-    *::before,
-    *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: var(--font);
+      background: var(--bg-page);
       min-height: 100vh;
-      background: var(--color-bg-page);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-      overflow: hidden;
-      transition: background 0.3s ease;
+      color: var(--text);
+      transition: background 0.25s;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(58, 160, 237, 0.13) 0%, transparent 70%);
-      top: -200px;
-      left: -200px;
-      pointer-events: none;
+    .theme-toggle {
+      position: fixed; top: 1.1rem; right: 1.1rem;
+      width: 2rem; height: 2rem;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
       border-radius: 50%;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(58, 160, 237, 0.08) 0%, transparent 70%);
-      bottom: -150px;
-      right: -150px;
-      pointer-events: none;
-      border-radius: 50%;
-    }
-
-    .theme-btn {
-      position: fixed;
-      top: 1.25rem;
-      right: 1.25rem;
-      width: 2.2rem;
-      height: 2.2rem;
-      border: 1px solid var(--color-border-glass);
-      background: var(--color-bg-card);
-      backdrop-filter: var(--blur);
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--color-text-muted);
-      font-size: 1rem;
-      z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-muted);
+      font-size: 0.95rem; z-index: 100;
       transition: color 0.2s, background 0.2s;
     }
+    .theme-toggle:hover { color: var(--text); }
 
-    .theme-btn:hover {
-      color: var(--color-text-primary);
+    .wrapper {
+      width: 100%; max-width: 480px;
+      animation: rise 0.4s cubic-bezier(0.22,1,0.36,1) both;
     }
-
-    .card {
-      width: 100%;
-      max-width: 420px;
-      background: var(--color-bg-card);
-      backdrop-filter: var(--blur);
-      border: 1px solid var(--color-border-glass);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card);
-      padding: 2.5rem 2rem;
-      position: relative;
-      z-index: 1;
-      animation: cardIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    @keyframes cardIn {
-      from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.98);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 2rem;
+      display: flex; align-items: center; gap: 0.65rem;
+      margin-bottom: 1.5rem;
+      padding: 0 0.25rem;
     }
-
     .brand-icon {
-      width: 2.8rem;
-      height: 2.8rem;
-      background: var(--color-primary);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 2.4rem; height: 2.4rem;
+      background: var(--primary);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.15rem;
     }
+    .brand-name { font-family: var(--font-display); font-size: 1.25rem; color: var(--text); }
+    .brand-tagline { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
 
-    .brand-icon i {
-      color: #fff;
-      font-size: 1.35rem;
-    }
-
-    .brand-name {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--color-text-primary);
-      line-height: 1.1;
-    }
-
-    .brand-sub {
-      font-size: 0.72rem;
-      color: var(--color-text-muted);
-      margin-top: 1px;
-    }
-
-    .card-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--color-text-primary);
-      line-height: 1.2;
-    }
-
-    .card-sub {
-      font-size: 0.85rem;
-      color: var(--color-text-muted);
-      margin-top: 0.4rem;
-      margin-bottom: 2rem;
-      line-height: 1.55;
-    }
-
-    .btn-google {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      padding: 0.78rem 1rem;
-      background: #fff;
-      color: #3c4043;
-      border: 1px solid #dadce0;
-      border-radius: var(--radius-md);
-      font-family: var(--font);
-      font-size: 0.92rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.18s, box-shadow 0.18s, transform 0.15s;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 2.25rem 2rem;
       position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), #48c3ff);
     }
 
-    .btn-google:hover {
-      background: #f8f9fa;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-      transform: translateY(-1px);
-    }
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeIn 0.25s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
 
-    .btn-google:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    }
+    /* ── Progress bar ── */
+    .progress-wrap { margin-bottom: 1.75rem; }
+    .progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem; }
+    .progress-title { font-size: 0.78rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .progress-step { font-size: 0.78rem; color: var(--text-muted); }
+    .progress-track { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary); border-radius: 99px; transition: width 0.4s ease; }
 
-    .btn-google:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
+    /* ── Role selector ── */
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1.25rem; }
+    .role-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 0.9rem;
+      cursor: pointer; text-align: center;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      background: var(--bg-input);
     }
+    .role-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .role-card.selected { border-color: var(--primary); background: var(--primary-light); }
+    .role-card i { font-size: 1.8rem; color: var(--primary); display: block; margin-bottom: 0.5rem; }
+    .role-card .role-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .role-card .role-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; line-height: 1.45; }
 
-    [data-theme="dark"] .btn-google {
-      background: #2a2f3d;
-      border-color: rgba(255, 255, 255, 0.12);
-      color: #e8edf2;
-    }
+    /* ── Typography ── */
+    .screen-title { font-family: var(--font-display); font-size: 1.55rem; color: var(--text); line-height: 1.2; }
+    .screen-sub { font-size: 0.84rem; color: var(--text-muted); margin-top: 0.35rem; margin-bottom: 1.5rem; line-height: 1.55; }
 
-    [data-theme="dark"] .btn-google:hover {
-      background: #323848;
+    /* ── Form ── */
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text); margin-bottom: 0.35rem; }
+    .field label .opt { color: var(--text-muted); font-weight: 400; }
+    .input-wrap { position: relative; }
+    .input-wrap i.ico { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem; pointer-events: none; }
+    .input-wrap input, .input-wrap select {
+      width: 100%; padding: 0.65rem 0.85rem 0.65rem 2.2rem;
+      background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text);
+      font-family: var(--font); font-size: 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
     }
+    .input-wrap input:focus, .input-wrap select:focus {
+      outline: none; border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(26,127,212,0.12);
+    }
+    .input-wrap input.err { border-color: var(--error); }
+    .input-wrap.no-icon input, .input-wrap.no-icon select { padding-left: 0.85rem; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .field-error { font-size: 0.75rem; color: var(--error); margin-top: 0.3rem; display: none; }
+    .field-error.show { display: block; }
 
-    .btn-google .btn-spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(60, 64, 67, 0.25);
-      border-top-color: #3c4043;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-      flex-shrink: 0;
-    }
+    /* ── Password strength ── */
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 2.5rem; }
+    .pw-eye { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 1rem; background: none; border: none; padding: 0; }
+    .pw-eye:hover { color: var(--text); }
+    .pw-strength { margin-top: 0.45rem; }
+    .pw-track { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .pw-fill { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; width: 0; }
+    .pw-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem; }
 
-    [data-theme="dark"] .btn-google .btn-spinner {
-      border-color: rgba(232, 237, 242, 0.2);
-      border-top-color: #e8edf2;
-    }
+    /* ── Select ── */
+    select option { background: var(--bg-card); color: var(--text); }
+    .select-arrow { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); font-size: 0.85rem; }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+    /* ── Medical info pills ── */
+    .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.35rem; }
+    .pill {
+      border: 1.5px solid var(--border);
+      border-radius: 99px; padding: 0.3rem 0.9rem;
+      font-size: 0.82rem; cursor: pointer; color: var(--text-muted);
+      background: var(--bg-input);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
+    .pill.selected { border-color: var(--primary); color: var(--primary); background: var(--primary-light); font-weight: 500; }
 
-    .btn-google.loading .btn-spinner {
-      display: block;
-    }
+    /* ── Divider ── */
+    .divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.25rem 0; }
+    .divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+    .divider span { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
 
-    .btn-google.loading .g-logo,
-    .btn-google.loading .btn-text {
-      display: none;
+    /* ── Buttons ── */
+    .btn {
+      width: 100%; padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm); border: none;
+      font-family: var(--font); font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; transition: background 0.18s, transform 0.15s, opacity 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
     }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .btn-outline {
+      background: transparent; border: 1.5px solid var(--border);
+      color: var(--text); margin-top: 0.6rem;
+      font-weight: 500;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-google {
+      background: #fff; border: 1px solid #dadce0;
+      color: #3c4043; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    [data-theme="dark"] .btn-google { background: #1e2738; border-color: var(--border); color: var(--text); }
+    .btn-google:hover { background: #f6f8fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transform: translateY(-1px); }
+    [data-theme="dark"] .btn-google:hover { background: #263040; }
+    .g-logo { width: 18px; height: 18px; flex-shrink: 0; }
 
-    .g-logo {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
+    .btn-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+    .btn.loading .btn-spinner { display: block; }
+    .btn.loading .btn-text, .btn.loading .g-logo, .btn.loading i { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .error-box {
-      display: none;
-      background: #fff1f1;
-      border: 1px solid #fbc8c8;
-      border-radius: var(--radius-md);
-      padding: 0.65rem 0.85rem;
-      font-size: 0.8rem;
-      color: #a32d2d;
-      margin-top: 1rem;
-      line-height: 1.5;
+    /* ── Error / info boxes ── */
+    .alert-box {
+      border-radius: var(--radius-sm); padding: 0.65rem 0.85rem;
+      font-size: 0.8rem; line-height: 1.5;
+      display: none; align-items: flex-start; gap: 0.5rem; margin-top: 0.85rem;
     }
+    .alert-box.show { display: flex; }
+    .alert-error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--error); }
+    .alert-info { background: var(--primary-light); border: 1px solid rgba(26,127,212,0.25); color: var(--primary); }
 
-    [data-theme="dark"] .error-box {
-      background: #2d1a1a;
-      border-color: #5a2828;
-      color: #f08080;
-    }
+    /* ── Footer ── */
+    .card-footer { margin-top: 1.5rem; font-size: 0.73rem; color: var(--text-muted); text-align: center; line-height: 1.65; }
+    .card-footer a { color: var(--primary); text-decoration: none; }
+    .card-footer a:hover { text-decoration: underline; }
 
-    .info-note {
-      margin-top: 1.25rem;
-      padding: 0.65rem 0.85rem;
-      background: var(--color-primary-light);
-      border-radius: var(--radius-md);
-      font-size: 0.78rem;
-      color: var(--color-primary);
-      line-height: 1.5;
-      display: flex;
-      gap: 0.5rem;
-      align-items: flex-start;
-    }
+    .link-btn { background: none; border: none; color: var(--primary); font-family: var(--font); font-size: inherit; cursor: pointer; padding: 0; text-decoration: underline; }
 
-    .info-note i {
-      margin-top: 1px;
-      flex-shrink: 0;
-    }
+    /* ── Page overlay ── */
+    .page-overlay { position: fixed; inset: 0; background: var(--bg-page); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; z-index: 999; }
+    .page-overlay.show { display: flex; }
+    .page-spin { width: 32px; height: 32px; border: 3px solid rgba(26,127,212,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .page-overlay p { font-size: 0.88rem; color: var(--text-muted); }
 
-    .card-footer {
-      margin-top: 1.75rem;
-      font-size: 0.73rem;
-      color: var(--color-text-muted);
-      text-align: center;
-      line-height: 1.7;
-    }
+    /* ── Success screen ── */
+    .success-icon { width: 3.5rem; height: 3.5rem; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
+    .success-icon i { font-size: 1.6rem; color: var(--primary); }
 
-    .card-footer a {
-      color: var(--color-primary);
-      text-decoration: none;
-    }
+    /* Step dots */
+    .step-dots { display: flex; gap: 6px; margin-bottom: 1.5rem; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.25s, width 0.25s; }
+    .dot.active { background: var(--primary); width: 18px; border-radius: 3px; }
+    .dot.done { background: var(--primary); opacity: 0.4; }
 
-    .page-loading {
-      position: fixed;
-      inset: 0;
-      background: var(--color-bg-page);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      z-index: 999;
-    }
-
-    .page-loading.show {
-      display: flex;
-    }
-
-    .page-spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid rgba(58, 160, 237, 0.2);
-      border-top-color: var(--color-primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    .page-loading p {
-      font-size: 0.9rem;
-      color: var(--color-text-muted);
-    }
+    /* Login tabs */
+    .tab-row { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 1.5rem; }
+    .tab-btn { flex: 1; padding: 0.6rem; border: none; background: transparent; font-family: var(--font); font-size: 0.85rem; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: background 0.2s, color 0.2s; }
+    .tab-btn.active { background: var(--primary); color: #fff; }
   </style>
 </head>
-
 <body>
-  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
-    <i class="ti ti-moon" id="themeIcon"></i>
-  </button>
 
-  <div class="page-loading" id="pageLoading">
-    <div class="page-spinner"></div>
-    <p>Signing you in…</p>
+<button class="theme-toggle" id="themeBtn" aria-label="Toggle theme"><i class="ti ti-moon" id="themeIcon"></i></button>
+
+<div class="page-overlay" id="pageOverlay">
+  <div class="page-spin"></div>
+  <p id="overlayMsg">Setting up your account…</p>
+</div>
+
+<div class="wrapper">
+  <div class="brand">
+    <div class="brand-icon"><i class="ti ti-heart-rate-monitor"></i></div>
+    <div>
+      <div class="brand-name">CampusCare</div>
+      <div class="brand-tagline">A healthy life for all students</div>
+    </div>
   </div>
 
-  <div class="card" id="loginCard">
-    <div class="brand">
-      <div class="brand-icon"><i class="ti ti-heart-rate-monitor"></i></div>
-      <div>
-        <p class="brand-name">CampusCare</p>
-        <p class="brand-sub">A healthy life for all students</p>
+  <div class="card" id="mainCard">
+
+    <!-- ════════════════════════════
+         SCREEN 0 — Role selection
+    ════════════════════════════ -->
+    <div class="screen active" id="s0">
+      <h1 class="screen-title">Welcome</h1>
+      <p class="screen-sub">Select your role to get started with CampusCare.</p>
+
+      <div class="tab-row">
+        <button class="tab-btn active" id="tabNew" onclick="switchTab('new')">Create account</button>
+        <button class="tab-btn" id="tabLogin" onclick="switchTab('login')">Sign in</button>
+      </div>
+
+      <div id="rolePickSection">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;">I am a…</p>
+        <div class="role-grid">
+          <div class="role-card" id="roleStudent" onclick="selectRole('student')">
+            <i class="ti ti-school"></i>
+            <div class="role-name">Student</div>
+            <div class="role-desc">Register with health records & matric number</div>
+          </div>
+          <div class="role-card" id="roleStaff" onclick="selectRole('staff')">
+            <i class="ti ti-stethoscope"></i>
+            <div class="role-name">Medical Staff</div>
+            <div class="role-desc">Register as a healthcare provider</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="margin-top:1.25rem;" onclick="startRegistration()">
+          <span class="btn-text">Continue</span>
+          <div class="btn-spinner"></div>
+        </button>
+      </div>
+
+      <div id="loginSection" style="display:none;">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;">Sign in as…</p>
+        <div class="role-grid">
+          <div class="role-card" id="loginRoleStudent" onclick="selectLoginRole('student')">
+            <i class="ti ti-school"></i>
+            <div class="role-name">Student</div>
+            <div class="role-desc">Access your health dashboard</div>
+          </div>
+          <div class="role-card" id="loginRoleStaff" onclick="selectLoginRole('staff')">
+            <i class="ti ti-stethoscope"></i>
+            <div class="role-name">Medical Staff</div>
+            <div class="role-desc">Access clinic portal</div>
+          </div>
+        </div>
+        <div class="divider"><hr><span>Sign in with Google</span><hr></div>
+        <button class="btn btn-google" id="loginGoogleBtn" onclick="triggerGoogleLogin()">
+          <svg class="g-logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span class="btn-text">Continue with Google</span>
+          <div class="btn-spinner"></div>
+        </button>
+        <div class="alert-box alert-error" id="loginError">
+          <i class="ti ti-alert-circle" style="flex-shrink:0;margin-top:1px;"></i>
+          <span id="loginErrMsg">Please select a role above before signing in.</span>
+        </div>
+        <div class="alert-box alert-info" style="margin-top:0.75rem;" id="loginInfo">
+          <i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px;"></i>
+          <span>You must register first. Google sign-in is the final step of registration.</span>
+        </div>
       </div>
     </div>
 
-    <h1 class="card-title">Welcome back</h1>
-    <p class="card-sub">Sign in with your Google account to access your CampusCare health dashboard.</p>
+    <!-- ════════════════════════════
+         STUDENT REGISTRATION
+    ════════════════════════════ -->
 
-    <button class="btn-google" id="googleBtn">
-      <svg class="g-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-          fill="#4285F4" />
-        <path
-          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-          fill="#34A853" />
-        <path
-          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-          fill="#FBBC05" />
-        <path
-          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-          fill="#EA4335" />
-      </svg>
-      <span class="btn-text">Continue with Google</span>
-      <div class="btn-spinner"></div>
-    </button>
+    <!-- Step 1: Personal info -->
+    <div class="screen" id="sStudentP1">
+      <div class="step-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <h1 class="screen-title">Personal details</h1>
+      <p class="screen-sub">Step 1 of 4 — Let's start with your name and contact info.</p>
 
-    <div class="error-box" id="errorBox">
-      <strong>Sign-in failed.</strong> <span id="errorMsg">Please try again.</span>
+      <div class="field-row">
+        <div class="field">
+          <label>First name</label>
+          <div class="input-wrap"><i class="ico ti ti-user"></i><input type="text" id="s_first" placeholder="e.g. Samuel" /></div>
+          <div class="field-error" id="s_first_err">Required</div>
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <div class="input-wrap"><i class="ico ti ti-user"></i><input type="text" id="s_last" placeholder="e.g. Adeyemi" /></div>
+          <div class="field-error" id="s_last_err">Required</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Middle name <span class="opt">(optional)</span></label>
+        <div class="input-wrap"><i class="ico ti ti-user"></i><input type="text" id="s_middle" placeholder="Middle name" /></div>
+      </div>
+
+      <div class="field">
+        <label>Phone number</label>
+        <div class="input-wrap"><i class="ico ti ti-phone"></i><input type="tel" id="s_phone" placeholder="+234 800 000 0000" /></div>
+        <div class="field-error" id="s_phone_err">Enter a valid phone number</div>
+      </div>
+
+      <div class="field">
+        <label>Matric number</label>
+        <div class="input-wrap"><i class="ico ti ti-id-badge"></i><input type="text" id="s_matric" placeholder="e.g. 22/0051/CA" /></div>
+        <div class="field-error" id="s_matric_err">Required</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitStudentP1()">
+        <span class="btn-text">Continue <i class="ti ti-arrow-right" style="font-size:0.9rem;"></i></span>
+        <div class="btn-spinner"></div>
+      </button>
+      <button class="btn btn-outline" onclick="goTo('s0')">Back</button>
     </div>
 
-    <div class="info-note">
-      <i class="ti ti-shield-check"></i>
-      <span>Google handles your password securely — CampusCare only receives your name and profile picture.</span>
+    <!-- Step 2: Password -->
+    <div class="screen" id="sStudentP2">
+      <div class="step-dots">
+        <div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <h1 class="screen-title">Create a password</h1>
+      <p class="screen-sub">Step 2 of 4 — Choose a strong password for your account.</p>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap pw-wrap">
+          <input type="password" id="s_pw" placeholder="At least 8 characters" oninput="checkStrength(this.value)" />
+          <button class="pw-eye" onclick="togglePw('s_pw', this)" tabindex="-1"><i class="ti ti-eye"></i></button>
+        </div>
+        <div class="pw-strength" id="pw_strength" style="display:none;">
+          <div class="pw-track"><div class="pw-fill" id="pw_fill"></div></div>
+          <div class="pw-label" id="pw_label"></div>
+        </div>
+        <div class="field-error" id="s_pw_err">Password must be at least 8 characters</div>
+      </div>
+
+      <div class="field">
+        <label>Confirm password</label>
+        <div class="input-wrap pw-wrap">
+          <input type="password" id="s_pw2" placeholder="Repeat your password" />
+          <button class="pw-eye" onclick="togglePw('s_pw2', this)" tabindex="-1"><i class="ti ti-eye"></i></button>
+        </div>
+        <div class="field-error" id="s_pw2_err">Passwords do not match</div>
+      </div>
+
+      <div class="alert-box alert-info show" style="margin-bottom:1rem;">
+        <i class="ti ti-shield-lock" style="flex-shrink:0;margin-top:1px;"></i>
+        <span>Use a mix of letters, numbers, and symbols for a stronger password.</span>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitStudentP2()">
+        <span class="btn-text">Continue <i class="ti ti-arrow-right" style="font-size:0.9rem;"></i></span>
+        <div class="btn-spinner"></div>
+      </button>
+      <button class="btn btn-outline" onclick="goTo('sStudentP1')">Back</button>
+    </div>
+
+    <!-- Step 3: Medical info -->
+    <div class="screen" id="sStudentP3">
+      <div class="step-dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div>
+      </div>
+      <h1 class="screen-title">Medical information</h1>
+      <p class="screen-sub">Step 3 of 4 — This is stored securely in your health record.</p>
+
+      <div class="field">
+        <label>Blood group</label>
+        <div class="pill-group" id="bloodPills">
+          <div class="pill" onclick="selectPill('blood', this)">A+</div>
+          <div class="pill" onclick="selectPill('blood', this)">A−</div>
+          <div class="pill" onclick="selectPill('blood', this)">B+</div>
+          <div class="pill" onclick="selectPill('blood', this)">B−</div>
+          <div class="pill" onclick="selectPill('blood', this)">AB+</div>
+          <div class="pill" onclick="selectPill('blood', this)">AB−</div>
+          <div class="pill" onclick="selectPill('blood', this)">O+</div>
+          <div class="pill" onclick="selectPill('blood', this)">O−</div>
+        </div>
+        <div class="field-error" id="s_blood_err">Please select your blood group</div>
+      </div>
+
+      <div class="field" style="margin-top:0.75rem;">
+        <label>Genotype</label>
+        <div class="pill-group" id="genoPills">
+          <div class="pill" onclick="selectPill('geno', this)">AA</div>
+          <div class="pill" onclick="selectPill('geno', this)">AS</div>
+          <div class="pill" onclick="selectPill('geno', this)">SS</div>
+          <div class="pill" onclick="selectPill('geno', this)">AC</div>
+          <div class="pill" onclick="selectPill('geno', this)">SC</div>
+        </div>
+        <div class="field-error" id="s_geno_err">Please select your genotype</div>
+      </div>
+
+      <div class="field" style="margin-top:0.75rem;">
+        <label>Known allergies <span class="opt">(optional)</span></label>
+        <div class="input-wrap no-icon">
+          <input type="text" id="s_allergies" placeholder="e.g. Penicillin, Peanuts" style="padding-left:0.85rem;" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Existing medical conditions <span class="opt">(optional)</span></label>
+        <div class="input-wrap no-icon">
+          <input type="text" id="s_conditions" placeholder="e.g. Asthma, Hypertension" style="padding-left:0.85rem;" />
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitStudentP3()">
+        <span class="btn-text">Continue <i class="ti ti-arrow-right" style="font-size:0.9rem;"></i></span>
+        <div class="btn-spinner"></div>
+      </button>
+      <button class="btn btn-outline" onclick="goTo('sStudentP2')">Back</button>
+    </div>
+
+    <!-- Step 4: Google sign-in to finalise -->
+    <div class="screen" id="sStudentP4">
+      <div class="step-dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div>
+      </div>
+      <h1 class="screen-title">Almost done!</h1>
+      <p class="screen-sub">Step 4 of 4 — Connect your Google account to activate your CampusCare profile.</p>
+
+      <div class="alert-box alert-info show" style="margin-bottom:1.25rem;">
+        <i class="ti ti-shield-check" style="flex-shrink:0;margin-top:1px;"></i>
+        <span>Your Google email will be linked to your account. Google handles authentication — we never see your password.</span>
+      </div>
+
+      <button class="btn btn-google" id="studentGoogleBtn" onclick="triggerGoogleRegister('student')">
+        <svg class="g-logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <span class="btn-text">Sign in with Google to complete registration</span>
+        <div class="btn-spinner"></div>
+      </button>
+
+      <div class="alert-box alert-error" id="studentGoogleErr" style="margin-top:0.75rem;">
+        <i class="ti ti-alert-circle" style="flex-shrink:0;margin-top:1px;"></i>
+        <span id="studentGoogleErrMsg">Google sign-in failed. Please try again.</span>
+      </div>
+
+      <button class="btn btn-outline" onclick="goTo('sStudentP3')">Back</button>
+    </div>
+
+    <!-- ════════════════════════════
+         STAFF REGISTRATION
+    ════════════════════════════ -->
+
+    <!-- Step 1: Personal info -->
+    <div class="screen" id="sStaffP1">
+      <div class="step-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <h1 class="screen-title">Staff details</h1>
+      <p class="screen-sub">Step 1 of 3 — Enter your name and contact info.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label>First name</label>
+          <div class="input-wrap"><i class="ico ti ti-user"></i><input type="text" id="st_first" placeholder="e.g. Chinyere" /></div>
+          <div class="field-error" id="st_first_err">Required</div>
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <div class="input-wrap"><i class="ico ti ti-user"></i><input type="text" id="st_last" placeholder="e.g. Okafor" /></div>
+          <div class="field-error" id="st_last_err">Required</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Middle name <span class="opt">(optional)</span></label>
+        <div class="input-wrap"><i class="ico ti ti-user"></i><input type="text" id="st_middle" placeholder="Middle name" /></div>
+      </div>
+
+      <div class="field">
+        <label>Phone number</label>
+        <div class="input-wrap"><i class="ico ti ti-phone"></i><input type="tel" id="st_phone" placeholder="+234 800 000 0000" /></div>
+        <div class="field-error" id="st_phone_err">Enter a valid phone number</div>
+      </div>
+
+      <div class="field">
+        <label>Medical ID / Staff number</label>
+        <div class="input-wrap"><i class="ico ti ti-id-badge"></i><input type="text" id="st_medid" placeholder="e.g. MED-2024-001" /></div>
+        <div class="field-error" id="st_medid_err">Required</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitStaffP1()">
+        <span class="btn-text">Continue <i class="ti ti-arrow-right" style="font-size:0.9rem;"></i></span>
+        <div class="btn-spinner"></div>
+      </button>
+      <button class="btn btn-outline" onclick="goTo('s0')">Back</button>
+    </div>
+
+    <!-- Staff Step 2: Password -->
+    <div class="screen" id="sStaffP2">
+      <div class="step-dots">
+        <div class="dot done"></div><div class="dot active"></div><div class="dot"></div>
+      </div>
+      <h1 class="screen-title">Create a password</h1>
+      <p class="screen-sub">Step 2 of 3 — Set a strong password for your staff account.</p>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap pw-wrap">
+          <input type="password" id="st_pw" placeholder="At least 8 characters" oninput="checkStrength2(this.value)" />
+          <button class="pw-eye" onclick="togglePw('st_pw', this)" tabindex="-1"><i class="ti ti-eye"></i></button>
+        </div>
+        <div class="pw-strength" id="pw2_strength" style="display:none;">
+          <div class="pw-track"><div class="pw-fill" id="pw2_fill"></div></div>
+          <div class="pw-label" id="pw2_label"></div>
+        </div>
+        <div class="field-error" id="st_pw_err">Password must be at least 8 characters</div>
+      </div>
+
+      <div class="field">
+        <label>Confirm password</label>
+        <div class="input-wrap pw-wrap">
+          <input type="password" id="st_pw2" placeholder="Repeat your password" />
+          <button class="pw-eye" onclick="togglePw('st_pw2', this)" tabindex="-1"><i class="ti ti-eye"></i></button>
+        </div>
+        <div class="field-error" id="st_pw2_err">Passwords do not match</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="submitStaffP2()">
+        <span class="btn-text">Continue <i class="ti ti-arrow-right" style="font-size:0.9rem;"></i></span>
+        <div class="btn-spinner"></div>
+      </button>
+      <button class="btn btn-outline" onclick="goTo('sStaffP1')">Back</button>
+    </div>
+
+    <!-- Staff Step 3: Google -->
+    <div class="screen" id="sStaffP3">
+      <div class="step-dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div>
+      </div>
+      <h1 class="screen-title">Almost done!</h1>
+      <p class="screen-sub">Step 3 of 3 — Connect your Google account to activate your staff profile.</p>
+
+      <div class="alert-box alert-info show" style="margin-bottom:1.25rem;">
+        <i class="ti ti-shield-check" style="flex-shrink:0;margin-top:1px;"></i>
+        <span>Your Google email will be linked to your staff account for secure access.</span>
+      </div>
+
+      <button class="btn btn-google" id="staffGoogleBtn" onclick="triggerGoogleRegister('staff')">
+        <svg class="g-logo" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <span class="btn-text">Sign in with Google to complete registration</span>
+        <div class="btn-spinner"></div>
+      </button>
+
+      <div class="alert-box alert-error" id="staffGoogleErr" style="margin-top:0.75rem;">
+        <i class="ti ti-alert-circle" style="flex-shrink:0;margin-top:1px;"></i>
+        <span id="staffGoogleErrMsg">Google sign-in failed. Please try again.</span>
+      </div>
+
+      <button class="btn btn-outline" onclick="goTo('sStaffP2')">Back</button>
+    </div>
+
+    <!-- Success screen -->
+    <div class="screen" id="sSuccess">
+      <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+      <h1 class="screen-title" style="text-align:center;">You're all set!</h1>
+      <p class="screen-sub" style="text-align:center;">Your account has been created. Redirecting you to the dashboard…</p>
     </div>
 
     <div class="card-footer">
-      By signing in, you agree to CampusCare's
-      <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
-      Need help? Contact <a href="mailto:health@calebuniversity.edu.ng">health@calebuniversity.edu.ng</a>
+      By continuing, you agree to CampusCare's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
+      Need help? <a href="mailto:health@calebuniversity.edu.ng">health@calebuniversity.edu.ng</a>
     </div>
   </div>
+</div>
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+const GOOGLE_CLIENT_ID = '467234002972-sel9f4tfo6v0tp73jea31ljhnha1hnaf.apps.googleusercontent.com';
 
-  <script>
-    /* ── Theme — stored as cc_theme so dashboard reads it too ── */
-    const html = document.documentElement;
-    const themeBtn = document.getElementById('themeBtn');
-    const themeIcon = document.getElementById('themeIcon');
+/* ── Theme ── */
+const html = document.documentElement;
+const themeBtn = document.getElementById('themeBtn');
+const themeIcon = document.getElementById('themeIcon');
+function applyTheme(dark) {
+  html.setAttribute('data-theme', dark ? 'dark' : 'light');
+  themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
+  localStorage.setItem('cc_theme', dark ? 'dark' : 'light');
+}
+const saved = localStorage.getItem('cc_theme');
+applyTheme(saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+themeBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') !== 'dark'));
 
-    function applyTheme(dark) {
-      html.setAttribute('data-theme', dark ? 'dark' : 'light');
-      themeIcon.className = dark ? 'ti ti-sun' : 'ti ti-moon';
-      /* Store in BOTH keys so either page can read it */
-      localStorage.setItem('cc_theme', dark ? 'dark' : 'light');
-      localStorage.setItem('theme', dark ? 'dark' : 'light');
+/* ── Skip if already logged in ── */
+if (localStorage.getItem('cc_user')) window.location.replace('index.html');
+
+/* ── State ── */
+let selectedRole = null;
+let selectedLoginRole = null;
+let selectedBloodGroup = null;
+let selectedGeno = null;
+let pendingRegData = {};
+let regMode = null; // 'student' | 'staff'
+
+/* ── Tab switching ── */
+function switchTab(tab) {
+  const isNew = tab === 'new';
+  document.getElementById('tabNew').classList.toggle('active', isNew);
+  document.getElementById('tabLogin').classList.toggle('active', !isNew);
+  document.getElementById('rolePickSection').style.display = isNew ? '' : 'none';
+  document.getElementById('loginSection').style.display = isNew ? 'none' : '';
+  document.getElementById('loginInfo').classList.remove('show');
+  document.getElementById('loginError').classList.remove('show');
+}
+
+/* ── Role selection ── */
+function selectRole(r) {
+  selectedRole = r;
+  document.getElementById('roleStudent').classList.toggle('selected', r === 'student');
+  document.getElementById('roleStaff').classList.toggle('selected', r === 'staff');
+}
+
+function selectLoginRole(r) {
+  selectedLoginRole = r;
+  document.getElementById('loginRoleStudent').classList.toggle('selected', r === 'student');
+  document.getElementById('loginRoleStaff').classList.toggle('selected', r === 'staff');
+  document.getElementById('loginError').classList.remove('show');
+}
+
+function startRegistration() {
+  if (!selectedRole) {
+    alert('Please select your role first.');
+    return;
+  }
+  regMode = selectedRole;
+  if (regMode === 'student') goTo('sStudentP1');
+  else goTo('sStaffP1');
+}
+
+/* ── Screen nav ── */
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ── Helpers ── */
+function val(id) { return document.getElementById(id).value.trim(); }
+function showErr(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show', show);
+}
+function markInput(id, err) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('err', err);
+}
+function phoneOk(p) { return /^[\+]?[\d\s\-\(\)]{7,15}$/.test(p); }
+
+/* ── Password strength ── */
+function scorePassword(pw) {
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  return score;
+}
+function renderStrength(score, fillId, labelId, wrapId) {
+  const fill = document.getElementById(fillId);
+  const label = document.getElementById(labelId);
+  const wrap = document.getElementById(wrapId);
+  wrap.style.display = 'block';
+  const configs = [
+    { w: '15%', bg: '#e74c3c', t: 'Very weak' },
+    { w: '30%', bg: '#e67e22', t: 'Weak' },
+    { w: '50%', bg: '#f1c40f', t: 'Fair' },
+    { w: '75%', bg: '#27ae60', t: 'Strong' },
+    { w: '100%', bg: '#1abc9c', t: 'Very strong ✓' },
+  ];
+  const c = configs[Math.min(score - 1, 4)] || configs[0];
+  fill.style.width = c.w; fill.style.background = c.bg;
+  label.textContent = c.t; label.style.color = c.bg;
+}
+function checkStrength(pw) {
+  if (!pw) { document.getElementById('pw_strength').style.display = 'none'; return; }
+  renderStrength(scorePassword(pw), 'pw_fill', 'pw_label', 'pw_strength');
+}
+function checkStrength2(pw) {
+  if (!pw) { document.getElementById('pw2_strength').style.display = 'none'; return; }
+  renderStrength(scorePassword(pw), 'pw2_fill', 'pw2_label', 'pw2_strength');
+}
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const isText = inp.type === 'text';
+  inp.type = isText ? 'password' : 'text';
+  btn.querySelector('i').className = isText ? 'ti ti-eye' : 'ti ti-eye-off';
+}
+
+/* ── Pill selection ── */
+function selectPill(group, el) {
+  const container = group === 'blood' ? 'bloodPills' : 'genoPills';
+  document.querySelectorAll('#' + container + ' .pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  if (group === 'blood') selectedBloodGroup = el.textContent;
+  else selectedGeno = el.textContent;
+}
+
+/* ════ STUDENT SUBMISSIONS ════ */
+
+function submitStudentP1() {
+  const first = val('s_first'), last = val('s_last'), phone = val('s_phone'), matric = val('s_matric');
+  let ok = true;
+  [['s_first', !first, 's_first_err'], ['s_last', !last, 's_last_err'], ['s_phone', !phoneOk(phone), 's_phone_err'], ['s_matric', !matric, 's_matric_err']].forEach(([inp, bad, err]) => {
+    markInput(inp, bad); showErr(err, bad); if (bad) ok = false;
+  });
+  if (!ok) return;
+  pendingRegData.firstName = first; pendingRegData.lastName = last;
+  pendingRegData.middleName = val('s_middle'); pendingRegData.phone = phone;
+  pendingRegData.matric = matric;
+  goTo('sStudentP2');
+}
+
+function submitStudentP2() {
+  const pw = document.getElementById('s_pw').value;
+  const pw2 = document.getElementById('s_pw2').value;
+  let ok = true;
+  if (pw.length < 8) { markInput('s_pw', true); showErr('s_pw_err', true); ok = false; } else { markInput('s_pw', false); showErr('s_pw_err', false); }
+  if (pw !== pw2) { markInput('s_pw2', true); showErr('s_pw2_err', true); ok = false; } else { markInput('s_pw2', false); showErr('s_pw2_err', false); }
+  if (scorePassword(pw) < 2) {
+    showErr('s_pw_err', true);
+    document.getElementById('s_pw_err').textContent = 'Password is too weak. Add more variety.';
+    ok = false;
+  }
+  if (!ok) return;
+  // Store hashed password (in real app this goes to a backend)
+  pendingRegData.passwordHash = btoa(pw + '_cc_salt'); // placeholder — replace with backend call
+  goTo('sStudentP3');
+}
+
+function submitStudentP3() {
+  let ok = true;
+  if (!selectedBloodGroup) { showErr('s_blood_err', true); ok = false; } else showErr('s_blood_err', false);
+  if (!selectedGeno) { showErr('s_geno_err', true); ok = false; } else showErr('s_geno_err', false);
+  if (!ok) return;
+  pendingRegData.bloodGroup = selectedBloodGroup;
+  pendingRegData.genotype = selectedGeno;
+  pendingRegData.allergies = val('s_allergies');
+  pendingRegData.conditions = val('s_conditions');
+  goTo('sStudentP4');
+}
+
+/* ════ STAFF SUBMISSIONS ════ */
+
+function submitStaffP1() {
+  const first = val('st_first'), last = val('st_last'), phone = val('st_phone'), medid = val('st_medid');
+  let ok = true;
+  [['st_first', !first, 'st_first_err'], ['st_last', !last, 'st_last_err'], ['st_phone', !phoneOk(phone), 'st_phone_err'], ['st_medid', !medid, 'st_medid_err']].forEach(([inp, bad, err]) => {
+    markInput(inp, bad); showErr(err, bad); if (bad) ok = false;
+  });
+  if (!ok) return;
+  pendingRegData.firstName = first; pendingRegData.lastName = last;
+  pendingRegData.middleName = val('st_middle'); pendingRegData.phone = phone;
+  pendingRegData.medicalId = medid;
+  goTo('sStaffP2');
+}
+
+function submitStaffP2() {
+  const pw = document.getElementById('st_pw').value;
+  const pw2 = document.getElementById('st_pw2').value;
+  let ok = true;
+  if (pw.length < 8) { markInput('st_pw', true); showErr('st_pw_err', true); ok = false; } else { markInput('st_pw', false); showErr('st_pw_err', false); }
+  if (pw !== pw2) { markInput('st_pw2', true); showErr('st_pw2_err', true); ok = false; } else { markInput('st_pw2', false); showErr('st_pw2_err', false); }
+  if (scorePassword(pw) < 2) {
+    showErr('st_pw_err', true);
+    document.getElementById('st_pw_err').textContent = 'Password is too weak. Add more variety.';
+    ok = false;
+  }
+  if (!ok) return;
+  pendingRegData.passwordHash = btoa(pw + '_cc_salt');
+  goTo('sStaffP3');
+}
+
+/* ════ GOOGLE AUTH ════ */
+
+function parseJwt(token) {
+  try {
+    const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(atob(b64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+  } catch { return null; }
+}
+
+let googleMode = null; // 'register-student' | 'register-staff' | 'login-student' | 'login-staff'
+let activeErrBoxId = null;
+let activeErrMsgId = null;
+
+function triggerGoogleRegister(role) {
+  googleMode = 'register-' + role;
+  activeErrBoxId = role === 'student' ? 'studentGoogleErr' : 'staffGoogleErr';
+  activeErrMsgId = role === 'student' ? 'studentGoogleErrMsg' : 'staffGoogleErrMsg';
+  const btn = document.getElementById(role === 'student' ? 'studentGoogleBtn' : 'staffGoogleBtn');
+  btn.classList.add('loading'); btn.disabled = true;
+  document.getElementById(activeErrBoxId).classList.remove('show');
+  promptGoogle();
+}
+
+function triggerGoogleLogin() {
+  if (!selectedLoginRole) {
+    document.getElementById('loginErrMsg').textContent = 'Please select a role (Student or Medical Staff) before signing in.';
+    document.getElementById('loginError').classList.add('show');
+    return;
+  }
+
+  // Check if user is registered
+  const allUsers = getAllUsers();
+  // We'll validate after Google callback since we need email
+  googleMode = 'login-' + selectedLoginRole;
+  activeErrBoxId = 'loginError';
+  activeErrMsgId = 'loginErrMsg';
+  const btn = document.getElementById('loginGoogleBtn');
+  btn.classList.add('loading'); btn.disabled = true;
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('loginInfo').classList.remove('show');
+  promptGoogle();
+}
+
+function promptGoogle() {
+  if (typeof google === 'undefined') {
+    showGoogleError('Google Sign-In could not load. Check your internet and refresh.'); return;
+  }
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCallback, auto_select: false });
+  google.accounts.id.prompt(n => {
+    if (n.isNotDisplayed() || n.isSkippedMoment()) {
+      google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID, scope: 'openid email profile',
+        callback: tok => {
+          if (tok.error) { showGoogleError('Sign-in was cancelled. Please try again.'); return; }
+          fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + tok.access_token } })
+            .then(r => r.json()).then(info => processGoogleInfo(info)).catch(() => showGoogleError('Could not fetch your profile. Try again.'));
+        }
+      }).requestAccessToken();
+    }
+  });
+}
+
+function handleGoogleCallback(response) {
+  const payload = parseJwt(response.credential);
+  if (!payload) { showGoogleError('Could not read your Google account. Try again.'); return; }
+  processGoogleInfo(payload);
+}
+
+function processGoogleInfo(info) {
+  const mode = googleMode;
+  const email = info.email;
+  const avatarUrl = info.picture || null;
+  const gFirstName = info.given_name || info.name.split(' ')[0] || '';
+  const gLastName = info.family_name || info.name.split(' ').slice(-1)[0] || '';
+  const initials = (gFirstName[0] || '') + (gLastName[0] || '');
+
+  if (mode.startsWith('register-')) {
+    // Registration flow
+    const role = mode.replace('register-', '');
+    const allUsers = getAllUsers();
+    const exists = allUsers.find(u => u.email === email && u.role === role);
+    if (exists) {
+      showGoogleError('An account with this Google email already exists for this role. Please sign in instead.');
+      return;
     }
 
-    /* Read preference — cc_theme takes priority */
-    const savedTheme = localStorage.getItem('cc_theme') || localStorage.getItem('theme');
-    applyTheme(savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
-    themeBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') !== 'dark'));
+    const session = {
+      role,
+      email,
+      firstName: pendingRegData.firstName,
+      lastName: pendingRegData.lastName,
+      middleName: pendingRegData.middleName || '',
+      fullName: pendingRegData.firstName + ' ' + pendingRegData.lastName,
+      displayName: pendingRegData.firstName + ' ' + (pendingRegData.lastName[0] || '') + '.',
+      initials: (pendingRegData.firstName[0] + pendingRegData.lastName[0]).toUpperCase(),
+      avatarUrl,
+      phone: pendingRegData.phone,
+      passwordHash: pendingRegData.passwordHash,
+      ...(role === 'student' ? {
+        matric: pendingRegData.matric,
+        bloodGroup: pendingRegData.bloodGroup,
+        genotype: pendingRegData.genotype,
+        allergies: pendingRegData.allergies || '',
+        conditions: pendingRegData.conditions || '',
+      } : {
+        medicalId: pendingRegData.medicalId,
+      }),
+      googleName: info.name,
+      googleEmail: email,
+      registeredAt: new Date().toISOString(),
+      loggedInAt: new Date().toISOString(),
+    };
 
-    /* ── Skip login if already signed in ── */
-    if (localStorage.getItem('cc_user')) {
-      window.location.replace('index.html');
+    // Store in registry
+    allUsers.push(session);
+    localStorage.setItem('cc_users', JSON.stringify(allUsers));
+    localStorage.setItem('cc_user', JSON.stringify(session));
+
+    goTo('sSuccess');
+    document.getElementById('pageOverlay').classList.add('show');
+    document.getElementById('overlayMsg').textContent = 'Setting up your dashboard…';
+    setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+
+  } else {
+    // Login flow
+    const role = mode.replace('login-', '');
+    const allUsers = getAllUsers();
+    const user = allUsers.find(u => u.email === email && u.role === role);
+    if (!user) {
+      showGoogleError('No registered ' + (role === 'student' ? 'student' : 'staff') + ' account found for this Google email. Please register first.');
+      document.getElementById('loginInfo').classList.add('show');
+      return;
     }
+    // Update last login + avatar in case it changed
+    user.avatarUrl = avatarUrl || user.avatarUrl;
+    user.loggedInAt = new Date().toISOString();
+    // Update in registry
+    const idx = allUsers.findIndex(u => u.email === email && u.role === role);
+    allUsers[idx] = user;
+    localStorage.setItem('cc_users', JSON.stringify(allUsers));
+    localStorage.setItem('cc_user', JSON.stringify(user));
+    document.getElementById('pageOverlay').classList.add('show');
+    document.getElementById('overlayMsg').textContent = 'Signing you in…';
+    setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+  }
+}
 
-    const GOOGLE_CLIENT_ID = '467234002972-sel9f4tfo6v0tp73jea31ljhnha1hnaf.apps.googleusercontent.com';
+function showGoogleError(msg) {
+  // Reset all Google buttons
+  ['loginGoogleBtn','studentGoogleBtn','staffGoogleBtn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
+  });
+  if (activeErrMsgId) document.getElementById(activeErrMsgId).textContent = msg;
+  if (activeErrBoxId) document.getElementById(activeErrBoxId).classList.add('show');
+}
 
-    function parseJwt(token) {
-      try {
-        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-        const json = decodeURIComponent(
-          atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
-        );
-        return JSON.parse(json);
-      } catch { return null; }
-    }
-
-    function handleGoogleCredential(response) {
-      const payload = parseJwt(response.credential);
-      if (!payload) { showError('Could not read your Google account info. Please try again.'); return; }
-
-      document.getElementById('pageLoading').classList.add('show');
-      document.getElementById('loginCard').style.opacity = '0.4';
-      document.getElementById('loginCard').style.pointerEvents = 'none';
-
-      const firstName = payload.given_name || payload.name.split(' ')[0] || '';
-      const lastName = payload.family_name || payload.name.split(' ').slice(-1)[0] || '';
-      const initials = (firstName[0] || '') + (lastName[0] || '');
-
-      const session = {
-        email: payload.email,
-        firstName,
-        lastName,
-        fullName: payload.name,
-        displayName: firstName ? `${firstName} ${lastName[0] || ''}.`.trim() : payload.name,
-        initials: initials.toUpperCase(),
-        avatarUrl: payload.picture || null,
-        loggedInAt: new Date().toISOString(),
-      };
-
-      localStorage.setItem('cc_user', JSON.stringify(session));
-      setTimeout(() => { window.location.href = 'index.html'; }, 800);
-    }
-
-    function showError(msg) {
-      const btn = document.getElementById('googleBtn');
-      btn.classList.remove('loading'); btn.disabled = false;
-      document.getElementById('errorMsg').textContent = msg;
-      document.getElementById('errorBox').style.display = 'block';
-    }
-
-    window.addEventListener('load', () => {
-      if (typeof google === 'undefined') {
-        showError('Could not load Google Sign-In. Check your internet connection and refresh.');
-        return;
-      }
-
-      google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleCredential,
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
-
-      document.getElementById('googleBtn').addEventListener('click', () => {
-        const btn = document.getElementById('googleBtn');
-        btn.classList.add('loading'); btn.disabled = true;
-        document.getElementById('errorBox').style.display = 'none';
-
-        google.accounts.id.prompt((notification) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            google.accounts.oauth2.initTokenClient({
-              client_id: GOOGLE_CLIENT_ID,
-              scope: 'openid email profile',
-              callback: (tokenResponse) => {
-                if (tokenResponse.error) { showError('Google sign-in was cancelled or failed. Please try again.'); return; }
-                fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-                })
-                  .then(r => r.json())
-                  .then(info => {
-                    const firstName = info.given_name || info.name.split(' ')[0] || '';
-                    const lastName = info.family_name || info.name.split(' ').slice(-1)[0] || '';
-                    const initials = (firstName[0] || '') + (lastName[0] || '');
-                    const session = {
-                      email: info.email, firstName, lastName,
-                      fullName: info.name,
-                      displayName: firstName ? `${firstName} ${lastName[0] || ''}.`.trim() : info.name,
-                      initials: initials.toUpperCase(),
-                      avatarUrl: info.picture || null,
-                      loggedInAt: new Date().toISOString(),
-                    };
-                    localStorage.setItem('cc_user', JSON.stringify(session));
-                    document.getElementById('pageLoading').classList.add('show');
-                    setTimeout(() => { window.location.href = 'index.html'; }, 800);
-                  })
-                  .catch(() => showError('Could not fetch your profile. Please try again.'));
-              }
-            }).requestAccessToken();
-          }
-        });
-      });
-    });
-  </script>
+function getAllUsers() {
+  try { return JSON.parse(localStorage.getItem('cc_users') || '[]'); } catch { return []; }
+}
+</script>
 </body>
-
 </html>
